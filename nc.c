@@ -235,7 +235,7 @@ void myprint(WINDOW *w, const char *what)
 	}
 	else
 	{
-		wprintw(w, what);
+		wprintw(w, "%s", what);
 	}
 }
 
