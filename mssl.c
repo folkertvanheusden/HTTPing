@@ -253,7 +253,7 @@ int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO 
 			}
 			else
 			{
-				set_error(gettext("SSL handshake error: %s"), SSL_get_error(*ssl_h, err));
+				set_error(gettext("SSL handshake error: %s"), ERR_reason_error_string(ERR_get_error()));
 				return -1;
 			}
 		}
