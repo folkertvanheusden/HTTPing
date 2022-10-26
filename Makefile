@@ -65,7 +65,7 @@ MAN_EN=httping.1
 MAN_NL=httping-nl.1
 MAN_RU=httping-ru.1
 
-DOCS=license.txt license.OpenSSL readme.txt
+DOCS=README.md LICENSE
 
 ifeq ($(SSL),no)
 CFLAGS+=-DNO_SSL
