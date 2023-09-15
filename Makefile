@@ -103,8 +103,6 @@ all: $(TARGET) $(TRANSLATIONS)
 
 $(TARGET): $(OBJS)
 	$(CC) $(WFLAGS) $(OBJS) $(LDFLAGS) -o $(TARGET)
-	#
-	# Oh, blatant plug: http://www.vanheusden.com/wishlist.php
 
 install: $(TARGET) $(TRANSLATIONS)
 	$(INSTALLDIR) $(DESTDIR)/$(BINDIR)

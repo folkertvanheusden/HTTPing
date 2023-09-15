@@ -43,16 +43,21 @@
 
 typedef struct
 {
-	double cur, min, avg, max, sd;
+	double cur, min, avg, max, sd, med;
 	int n;
 	char valid, cur_valid;
+	char calc_median;
+	int median_size;
+	double *median;
 } stats_t;
 
 int enc_b64(char *source, int source_lenght, char *target);
 
-void init_statst(stats_t *data);
+void init_statst(stats_t *data, char do_median);
+void uninit_statst(stats_t *data);
 void update_statst(stats_t *data, double in);
 void reset_statst_cur(stats_t *data);
 double calc_sd(stats_t *in);
+double calc_median(const stats_t *in);
 
 #endif

@@ -865,7 +865,10 @@ void stats_line(const char with_header, const char *const complete_url, const in
 
 	if (ok > 0)
 	{
-		printf(gettext("round-trip min/avg/max%s = %s%.1f%s/%s%.1f%s/%s%.1f%s"), verbose ? gettext("/sd") : "", c_bright, t_total -> min, c_normal, c_bright, avg_httping_time, c_normal, c_bright, t_total -> max, c_normal);
+		if (t_total->calc_median)
+			printf(gettext("round-trip min/avg/median/max%s = %s%.1f%s/%s%.1f%s/%.1f/%s%.1f%s"), verbose ? gettext("/sd") : "", c_bright, t_total -> min, c_normal, c_bright, avg_httping_time, c_normal, calc_median(t_total), c_bright, t_total -> max, c_normal);
+		else
+			printf(gettext("round-trip min/avg/max%s = %s%.1f%s/%s%.1f%s/%s%.1f%s"), verbose ? gettext("/sd") : "", c_bright, t_total -> min, c_normal, c_bright, avg_httping_time, c_normal, c_bright, t_total -> max, c_normal);
 
 		if (verbose)
 		{
@@ -962,6 +965,7 @@ int main(int argc, char *argv[])
 	struct addrinfo *ai = NULL, *ai_use = NULL;
 	struct addrinfo *ai_proxy = NULL, *ai_use_proxy = NULL;
 	char http2 = 0;
+	char use_median = 0;
 
 	static struct option long_options[] =
 	{
@@ -1034,6 +1038,7 @@ int main(int argc, char *argv[])
 		{"tos", 1, NULL, 24 },
 		{"header", 1, NULL, 25 },
 		{"ca-path", 1, NULL, 26 },
+		{"median", 0, NULL, 27 },
 #ifdef NC
 		{"ncurses",	0, NULL, 'K' },
 		{"gui",	0, NULL, 'K' },
@@ -1055,20 +1060,6 @@ int main(int argc, char *argv[])
 	bindtextdomain("httping", LOCALEDIR);
 	textdomain("httping");
 
-	init_statst(&t_resolve);
-	init_statst(&t_connect);
-	init_statst(&t_write);
-	init_statst(&t_request);
-	init_statst(&t_total);
-	init_statst(&t_ssl);
-	init_statst(&t_close);
-
-	init_statst(&stats_to);
-#if defined(linux) || defined(__FreeBSD__)
-	init_statst(&tcp_rtt_stats);
-#endif
-	init_statst(&stats_header_size);
-
 	determine_terminal_size(&max_y, &max_x);
 
 	signal(SIGPIPE, SIG_IGN);
@@ -1083,6 +1074,10 @@ int main(int argc, char *argv[])
 
 			case 26:
 				ca_path = optarg;
+				break;
+
+			case 27:
+				use_median = 1;
 				break;
 
 			case 25:
@@ -1415,6 +1410,20 @@ int main(int argc, char *argv[])
 				return 1;
 		}
 	}
+
+	init_statst(&t_resolve, use_median);
+	init_statst(&t_connect, use_median);
+	init_statst(&t_write, use_median);
+	init_statst(&t_request, use_median);
+	init_statst(&t_total, use_median);
+	init_statst(&t_ssl, use_median);
+	init_statst(&t_close, use_median);
+
+	init_statst(&stats_to, use_median);
+#if defined(linux) || defined(__FreeBSD__)
+	init_statst(&tcp_rtt_stats, use_median);
+#endif
+	init_statst(&stats_header_size, use_median);
 
 	if (do_fetch_proxy_settings)
 		fetch_proxy_settings(&proxy_user, &proxy_password, &proxy_host, &proxy_port, use_ssl, use_ipv6);
@@ -2470,6 +2479,19 @@ error_exit:
 #endif
 
 	fflush(NULL);
+
+	uninit_statst(&t_resolve);
+	uninit_statst(&t_connect);
+	uninit_statst(&t_write);
+	uninit_statst(&t_request);
+	uninit_statst(&t_total);
+	uninit_statst(&t_ssl);
+	uninit_statst(&t_close);
+	uninit_statst(&stats_to);
+#if defined(linux) || defined(__FreeBSD__)
+	uninit_statst(&tcp_rtt_stats);
+#endif
+	uninit_statst(&stats_header_size);
 
 	if (ok)
 		return 0;

@@ -1,11 +1,11 @@
-.\" Copyright Folkert van Heusden, 2003-2016
+.\" Copyright Folkert van Heusden, 2003-2023
 .\"
 .\" This file may be copied under the conditions described
 .\" in the GNU GENERAL PUBLIC LICENSE, version 2
 .\" that can be found on the website of the free software
 .\" foundation.
 .\"
-.TH HTTPING 1 2016-09 "httping"
+.TH HTTPING 1 2023-09 "httping"
 .SH NAME
 httping - measure the latency and throughput of a webserver
 .SH SYNOPSIS
@@ -164,6 +164,9 @@ When the server sends a cookie, it will be returned in the next request.
 .TP
 .B "\-\-max\-mtu x"
 Maximum MTU to use. Cannot be larger than network interface MTU.
+.TP
+.B "\-\-median"
+Calculate median.
 .TP
 .B "\-\-no\-host\-header"
 Do not put a "Host:"\-header in the request header.

@@ -1,14 +1,22 @@
 #include <math.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "gen.h"
 
-void init_statst(stats_t *data)
+void init_statst(stats_t *data, char do_median)
 {
 	memset(data, 0x00, sizeof(stats_t));
 
 	data -> min = MY_DOUBLE_INF;
 	data -> max = -data -> min;
+
+	data -> calc_median = do_median;
+}
+
+void uninit_statst(stats_t *data)
+{
+	free(data -> median);
 }
 
 void update_statst(stats_t *data, double in)
@@ -18,9 +26,21 @@ void update_statst(stats_t *data, double in)
 	data -> max = max(data -> max, in);
 	data -> avg += in;
 	data -> sd += in * in;
-	(data -> n)++;
 	data -> valid = 1;
 	data -> cur_valid = 1;
+
+	if (data -> calc_median) {
+		if (data -> n >= data -> median_size) {
+			data -> median_size = data -> median_size == 0 ? 128 : data -> median_size * 2;
+
+			data -> median = (double *)realloc(data -> median, data -> median_size * sizeof(double));
+		}
+	}
+
+	if (data -> calc_median)
+		data -> median[data -> n] = in;
+
+	data -> n++;
 }
 
 void reset_statst_cur(stats_t *data)
@@ -38,6 +58,32 @@ double calc_sd(stats_t *in)
 	avg = in -> avg / (double)in -> n;
 
 	return sqrt((in -> sd / (double)in -> n) - pow(avg, 2.0));
+}
+
+static int cmpfunc(const void *a, const void *b)
+{
+	if (*(const double *)a > *(const double *)b)
+		return 1;
+
+	if (*(const double *)a < *(const double *)b)
+		return -1;
+
+	return 0;
+}
+
+double calc_median(const stats_t *in)
+{
+	int half = in -> n / 2;
+
+	if (in -> calc_median == 0)
+		return -1;
+
+	qsort(in -> median, in -> n, sizeof(double), cmpfunc);
+
+	if (in -> n & 1)
+		return in->median[half + 1];
+
+	return (in->median[half + 0] + in->median[half + 1]) / 2.;
 }
 
 /* Base64 encoding start */  

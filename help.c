@@ -74,7 +74,7 @@ void new_version_alert(void)
 
 void version(void)
 {
-	fprintf(stderr, gettext("HTTPing v" VERSION ", (C) 2003-2017 folkert@vanheusden.com\n"));
+	fprintf(stderr, gettext("HTTPing v" VERSION ", (C) 2003-2023 folkert@vanheusden.com\n"));
 #ifndef NO_SSL
 	fprintf(stderr, gettext(" * SSL support included (-l)\n"));
 #endif
@@ -245,6 +245,7 @@ void usage(const char *me)
 	/* output settings */
 	fprintf(stderr, gettext(" *** output settings ***\n"));
 	format_help("-s", "--show-statuscodes", gettext("show statuscodes"));
+	format_help(NULL, "--median", gettext("show median"));
 	format_help("-S", "--split-time", gettext("split measured time in its individual components (resolve, connect, send, receive, disconnect)"));
 	format_help(NULL, "--threshold-red", gettext("from what ping value to show the value in red (must be bigger than yellow), only in color mode (-Y)"));
 	format_help(NULL, "--threshold-yellow", gettext("from what ping value to show the value in yellow"));
