@@ -39,6 +39,8 @@ int history_n = 0;
 
 char draw_phase = 0;
 
+char fancy_colors = 0;
+
 char pause_graphs = 0;
 
 typedef enum { C_WHITE = 0, C_GREEN, C_YELLOW, C_BLUE, C_MAGENTA, C_CYAN, C_RED } color_t;
@@ -291,6 +293,8 @@ void init_ncurses_ui(double graph_limit_in, double hz_in, char use_colors_in)
         init_pair(C_YELLOW, COLOR_YELLOW, COLOR_BLACK);
         init_pair(C_GREEN, COLOR_GREEN, COLOR_BLACK);
         init_pair(C_RED, COLOR_RED, COLOR_BLACK);
+
+	fancy_colors = COLORS >= 256 && COLOR_PAIRS >= 256 && can_change_color();
 
 	kalman_init(0.0);
 
@@ -712,6 +716,9 @@ void draw_graph(double val)
 
 void show_stats_t(int y, int x, char *header, stats_t *data, char abbreviate)
 {
+	if (y & 1)
+		wattron(w_stats, A_DIM);
+
 	if (data -> valid)
 	{
 		char *cur_str = format_value(data -> cur, 6, 2, abbreviate);
@@ -734,6 +741,9 @@ void show_stats_t(int y, int x, char *header, stats_t *data, char abbreviate)
 	{
 		myprintloc(w_stats, y, x, gettext("%s:    n/a"), header);
 	}
+
+	if (y & 1)
+		wattroff(w_stats, A_DIM);
 }
 
 void update_stats(stats_t *resolve, stats_t *connect, stats_t *request, stats_t *total, stats_t *ssl_setup, int n_ok, int n_fail, const char *last_connect_str, const char *fp, char use_tfo, char dg, stats_t *st_to, stats_t *tcp_rtt_stats, int re_tx, int pmtu, int tos, stats_t *close_st, stats_t *t_write, int n_cookies, char abbreviate, stats_t *stats_header_size)
