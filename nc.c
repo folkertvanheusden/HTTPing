@@ -29,6 +29,7 @@ int logs_n = 0, slow_n = 0, fast_n = 0;
 char **slow_history = NULL, **fast_history = NULL;
 int window_history_n = 0;
 char use_colors = 0;
+int fast_nr = 0;
 
 double graph_limit = MY_DOUBLE_INF;
 double hz = 1.0;
@@ -339,6 +340,7 @@ void end_ncurses(void)
 
 void fast_log(const char *fmt, ...)
 {
+	int col_nr = fast_nr++ % 3;
 	char buffer[4096] = { 0 };
         va_list ap;
 
@@ -350,7 +352,17 @@ void fast_log(const char *fmt, ...)
 	memmove(&fast_history[1], &fast_history[0], (window_history_n - 1) * sizeof(char *));
 	fast_history[0] = strdup(buffer);
 
+	if (col_nr == 0)
+		wattron(w_fast, A_DIM);
+	else if (col_nr == 2)
+		wattron(w_fast, A_BOLD);
+
 	myprint(w_fast, buffer);
+
+	if (col_nr == 0)
+		wattroff(w_fast, A_DIM);
+	else if (col_nr == 2)
+		wattroff(w_fast, A_BOLD);
 
 	if (win_resize)
 		recreate_terminal();
