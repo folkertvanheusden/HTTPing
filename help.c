@@ -1,3 +1,4 @@
+#include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -44,28 +45,13 @@ void new_version_alert(void)
 		}
 
 		printf("Welcome to the new HTTPing version " VERSION "!\n\n");
-#ifdef NC
+#if HAVE_NCURSES
 		printf("Did you know that with -K you can start a fullscreen GUI version with nice graphs and lots more information? And that you can disable the moving graphs with -D?\n");
-#ifndef FW
+#if !HAVE_FFTW3
 		printf("And if you compile this program with libfftw3, that it can also show a fourier transform of the measured values?\n");
 #endif
 #else
 		printf("Did you know that if you compile this program with NCURSES, that it then includes a nice GUI with lots more information and graphs?\n");
-#endif
-
-#if !defined(TCP_TFO) && defined(linux)
-		if (uname(&buf) == 0)
-		{
-			char **rparts = NULL;
-			int n_rparts = 0;
-
-			split_string(buf.release, ".", &rparts, &n_rparts);
-
-			if (n_rparts >= 2 && ((atoi(rparts[0]) >= 3 && atoi(rparts[1]) >= 6) || atoi(rparts[0]) >= 4))
-				printf("This program supports TCP Fast Open! (if compiled in and only on Linux kernels 3.6 or more recent) See the readme.txt how to enable this.\n");
-
-			free_splitted_string(rparts, n_rparts);
-		}
 #endif
 
 		printf("\n\n");
@@ -79,17 +65,15 @@ void version(void)
 	fprintf(stderr, gettext(" * SSL support included (-l)\n"));
 #endif
 
-#ifdef NC
-#ifdef FW
+#if HAVE_NCURSES
+#if HAVE_FFTW3
 	fprintf(stderr, gettext(" * ncurses interface with FFT included (-K)\n"));
 #else
 	fprintf(stderr, gettext(" * ncurses interface included (-K)\n"));
 #endif
 #endif
 
-#ifdef TCP_TFO
 	fprintf(stderr, gettext(" * TFO (TCP fast open) support included (-F)\n"));
-#endif
 	fprintf(stderr, gettext("\n"));
 }
 
@@ -225,9 +209,7 @@ void usage(const char *me)
 	format_help("-r", "--resolve-once", gettext("resolve hostname only once (useful when pinging roundrobin DNS: also takes the first DNS lookup out of the loop so that the first measurement is also correct)"));
 	format_help("-W", NULL, gettext("do not abort the program if resolving failed: keep retrying"));
 	format_help("-y x", "--bind-to", gettext("bind to an ip-address (and thus interface) with an optional port"));
-#ifdef TCP_TFO
 	format_help("-F", "--tcp-fast-open", gettext("\"TCP fast open\" (TFO), reduces the latency of TCP connects"));
-#endif
 #ifdef linux
 	format_help(NULL, "--priority", gettext("set priority of packets"));
 #endif
@@ -283,10 +265,10 @@ void usage(const char *me)
 	fprintf(stderr, gettext("\n"));
 
 	/* GUI/ncurses mode */
-#if defined(NC)
+#if defined(HAVE_NCURSES)
 	fprintf(stderr, gettext(" *** GUI/ncurses mode settings ***\n"));
 	format_help("-K", "--ncurses / --gui", gettext("ncurses/GUI mode"));
-#if defined(FW)
+#if defined(HAVE_FFTW3)
 	format_help(NULL, "--draw-phase", gettext("draw phase (fourier transform) in gui"));
 #endif
 	format_help(NULL, "--slow-log", gettext("when the duration is x or more, show ping line in the slow log window (the middle window)"));

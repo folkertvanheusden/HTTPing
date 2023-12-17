@@ -1,3 +1,4 @@
+#include "config.h"
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <libintl.h>
@@ -17,7 +18,7 @@
 #include "gen.h"
 #include "main.h"
 #include "kalman.h"
-#ifdef FW
+#if HAVE_FFTW3
 #include "fft.h"
 #endif
 #include "utils.h"
@@ -69,7 +70,7 @@ void create_windows(void)
 		delwin(w_fast);
 	}
 
-#ifdef FW
+#if HAVE_FFTW3
 	fft_free();
 	fft_init(max_x);
 #endif
@@ -329,7 +330,7 @@ void end_ncurses(void)
 	free(history);
 	free(history_set);
 
-#ifdef FW
+#if HAVE_FFTW3
 	fft_free();
 	fft_stop();
 #endif
@@ -508,7 +509,7 @@ double get_cur_scc()
 	return ((double)n * t[0] - t[1]) / scc_val;
 }
 
-#ifdef FW
+#if HAVE_FFTW3
 void draw_fft(void)
 {
 	double mx_mag = 0.0;
@@ -855,7 +856,7 @@ void update_stats(stats_t *resolve, stats_t *connect, stats_t *request, stats_t 
 	if (dg && !pause_graphs)
 	{
 		draw_graph(k);
-#ifdef FW
+#if HAVE_FFTW3
 		draw_fft();
 #endif
 	}

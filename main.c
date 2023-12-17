@@ -1,5 +1,6 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
 
+#include "config.h"
 #define _GNU_SOURCE
 #include <sys/ioctl.h>
 #include <stdio.h>
@@ -28,7 +29,7 @@
 #if defined(sun) || defined(__sun)
 #include <sys/termios.h>
 #endif
-#ifdef NC
+#if HAVE_NCURSES
 #include <ncurses.h>
 #endif
 
@@ -42,7 +43,7 @@
 #include "utils.h"
 #include "error.h"
 #include "socks5.h"
-#ifdef NC
+#if HAVE_NCURSES
 #include "nc.h"
 #endif
 #include "cookies.h"
@@ -107,7 +108,7 @@ void determine_terminal_size(int *max_y, int *max_x)
 
 void emit_statuslines(double run_time)
 {
-#ifdef NC
+#if HAVE_NCURSES
 	if (ncurses_mode)
 	{
 		time_t t = time(NULL);
@@ -126,7 +127,7 @@ void emit_statuslines(double run_time)
 
 void emit_headers(char *in)
 {
-#ifdef NC
+#if HAVE_NCURSES
 	static char shown = 0;
 	int len_in = -1;
 
@@ -233,7 +234,7 @@ void emit_error(int verbose, int seq, double start_ts)
 {
 	char *ts = show_ts ? get_ts_str(verbose) : NULL;
 
-#ifdef NC
+#if HAVE_NCURSES
 	if (ncurses_mode)
 	{
 		slow_log("\n%s%s", ts ? ts : "", get_error());
@@ -256,7 +257,7 @@ void emit_error(int verbose, int seq, double start_ts)
 
 void handler(int sig)
 {
-#ifdef NC
+#if HAVE_NCURSES
 	if (sig == SIGWINCH)
 		win_resize = 1;
 	else
@@ -567,7 +568,7 @@ void do_aggregates(double cur_ms, int cur_ts, int n_aggregates, aggregate_t *agg
 
 			str_add(&line, " ms");
 
-#ifdef NC
+#if HAVE_NCURSES
 			if (ncurses_mode)
 				slow_log("\n%s", line);
 			else
@@ -1042,10 +1043,10 @@ int main(int argc, char *argv[])
 		{"header", 1, NULL, 25 },
 		{"ca-path", 1, NULL, 26 },
 		{"median", 0, NULL, 27 },
-#ifdef NC
+#if HAVE_NCURSES
 		{"ncurses",	0, NULL, 'K' },
 		{"gui",	0, NULL, 'K' },
-#ifdef FW
+#if HAVE_FFTW3
 		{"no-graph",	0, NULL, 'D' },
 #endif
 #endif
@@ -1127,7 +1128,7 @@ int main(int argc, char *argv[])
 				use_tcp_nodelay = 0;
 				break;
 
-#ifdef NC
+#if HAVE_NCURSES
 			case 14:
 				draw_phase = 1;
 				break;
@@ -1145,14 +1146,14 @@ int main(int argc, char *argv[])
 				graph_limit = atof(optarg);
 				break;
 
-#ifdef NC
+#if HAVE_NCURSES
 			case 'K':
 				ncurses_mode = 1;
 				adaptive_interval = 1;
 				if (!wait_set)
 					wait = 0.5;
 				break;
-#ifdef FW
+#if HAVE_FFTW3
 			case 'D':
 				nc_graph = 0;
 				break;
@@ -1389,11 +1390,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'F':
-#ifdef TCP_TFO
 				use_tfo = 1;
-#else
-				fprintf(stderr, gettext("Warning: TCP TFO is not supported. Disabling.\n"));
-#endif
 				break;
 
 			case 22:
@@ -1463,7 +1460,7 @@ int main(int argc, char *argv[])
 	if (!auth_password)
 		auth_password = ap_dummy;
 
-#ifdef NC
+#if HAVE_NCURSES
 	if (ncurses_mode)
 	{
 		if (wait == 0.0)
@@ -1476,7 +1473,7 @@ int main(int argc, char *argv[])
 	if (strncmp(complete_url, "https://", 8) == 0 && !use_ssl)
 	{
 		use_ssl = 1;
-#ifdef NC
+#if HAVE_NCURSES
 		if (ncurses_mode)
 		{
 			slow_log(gettext("\nAuto enabling SSL due to https-URL\n"));
@@ -1494,7 +1491,7 @@ int main(int argc, char *argv[])
 
 	if (verbose)
 	{
-#ifdef NC
+#if HAVE_NCURSES
 		if (ncurses_mode)
 		{
 			slow_log(gettext("\nConnecting to host %s, port %d and requesting file %s"), hostname, portnr, get);
@@ -1526,7 +1523,7 @@ int main(int argc, char *argv[])
 
 	if (!quiet && !machine_readable && !nagios_mode && !json_output)
 	{
-#ifdef NC
+#if HAVE_NCURSES
 		if (ncurses_mode)
 			slow_log("\nPING %s:%d (%s):", hostname, portnr, get);
 		else
@@ -1561,7 +1558,7 @@ int main(int argc, char *argv[])
 	started_at = get_ts();
 	if (proxy_host)
 	{
-#ifdef NC
+#if HAVE_NCURSES
 		if (ncurses_mode)
 		{
 			slow_log(gettext("\nResolving hostname %s"), proxy_host);
@@ -1579,7 +1576,7 @@ int main(int argc, char *argv[])
 	else if (resolve_once)
 	{
 		char *res_host = divert_connect ? divert_connect : hostname;
-#ifdef NC
+#if HAVE_NCURSES
 		if (ncurses_mode)
 		{
 			slow_log(gettext("\nResolving hostname %s"), res_host);
@@ -1661,7 +1658,7 @@ persistent_loop:
 
 				memset(&addr, 0x00, sizeof addr);
 
-#ifdef NC
+#if HAVE_NCURSES
 				if (ncurses_mode && first_resolve)
 				{
 					slow_log(gettext("\nResolving hostname %s"), res_host);
@@ -1730,7 +1727,7 @@ persistent_loop:
 
 				if (line)
 				{
-#ifdef NC
+#if HAVE_NCURSES
 					if (ncurses_mode)
 						slow_log("\n%s", line);
 					else
@@ -1913,7 +1910,7 @@ persistent_loop:
 			}
 
 #if defined(linux) || defined(__FreeBSD__)
-#ifdef NC
+#if HAVE_NCURSES
 			if (!use_ssl && ncurses_mode)
 			{
 				struct timeval tv;
@@ -1969,7 +1966,7 @@ persistent_loop:
 
 			rc = get_HTTP_headers(fd, ssl_h, &reply, &overflow, timeout);
 
-#ifdef NC
+#if HAVE_NCURSES
 			if (ncurses_mode && !get_instead_of_head && overflow > 0)
 			{
 				static int more_data_cnt = 0;
@@ -2154,10 +2151,8 @@ persistent_loop:
 #if defined(linux) || defined(__FreeBSD__)
 			if (getsockopt(fd, IPPROTO_TCP, TCP_INFO, &info, &info_len) == 0)
 			{
-#ifdef TCP_TFO
 				if (info.tcpi_options & TCPI_OPT_SYN_DATA)
 					tfo_success = 1;
-#endif
 
 				update_statst(&tcp_rtt_stats, (double)info.tcpi_rtt / 1000.0);
 
@@ -2335,19 +2330,17 @@ persistent_loop:
 
 				if (audible)
 				{
-#ifdef NC
+#if HAVE_NCURSES
 					my_beep();
 #else
 					putchar('\a');
 #endif
 				}
 
-#ifdef TCP_TFO
 				if (tfo_success)
 					str_add(&line, " F");
-#endif
 
-#ifdef NC
+#if HAVE_NCURSES
 				if (ncurses_mode)
 				{
 					if (dummy_ms >= show_slow_log)
@@ -2388,7 +2381,7 @@ persistent_loop:
 		}
 
 		emit_statuslines(get_ts() - started_at);
-#ifdef NC
+#if HAVE_NCURSES
 		if (ncurses_mode)
 			update_stats(&t_resolve, &t_connect, &t_request, &t_total, &t_ssl, curncount, err, sc, fp, use_tfo, nc_graph, &stats_to, &tcp_rtt_stats, re_tx, pmtu, recv_tos, &t_close, &t_write, n_dynamic_cookies, abbreviate, &stats_header_size);
 #endif
@@ -2396,7 +2389,7 @@ persistent_loop:
 		free(sc);
 		free(fp);
 
-#ifdef NC
+#if HAVE_NCURSES
 		if (ncurses_mode)
 			update_terminal();
 		else
@@ -2434,7 +2427,7 @@ persistent_loop:
 #endif
 	}
 
-#ifdef NC
+#if HAVE_NCURSES
 	if (ncurses_mode)
 		end_ncurses();
 #endif
