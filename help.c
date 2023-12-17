@@ -1,10 +1,9 @@
 #include "config.h"
+#include <libintl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <sys/utsname.h>
-#include <libintl.h>
 
 #include "gen.h"
 #include "main.h"
@@ -35,7 +34,6 @@ void new_version_alert(void)
 
 	if (new_version)
 	{
-		struct utsname buf;
 		FILE *fh = fopen(SPAM_FILE, "w");
 		if (fh)
 		{
@@ -265,10 +263,10 @@ void usage(const char *me)
 	fprintf(stderr, gettext("\n"));
 
 	/* GUI/ncurses mode */
-#if defined(HAVE_NCURSES)
+#if HAVE_NCURSES
 	fprintf(stderr, gettext(" *** GUI/ncurses mode settings ***\n"));
 	format_help("-K", "--ncurses / --gui", gettext("ncurses/GUI mode"));
-#if defined(HAVE_FFTW3)
+#if HAVE_FFTW3
 	format_help(NULL, "--draw-phase", gettext("draw phase (fourier transform) in gui"));
 #endif
 	format_help(NULL, "--slow-log", gettext("when the duration is x or more, show ping line in the slow log window (the middle window)"));

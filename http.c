@@ -1,5 +1,5 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
-
+#include "config.h"
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>

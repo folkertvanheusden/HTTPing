@@ -1,3 +1,5 @@
+#include "config.h"
+#if HAVE_FFTW3
 #include <libintl.h>
 #include <math.h>
 #include <stdlib.h>
@@ -66,3 +68,4 @@ void fft_do(double *in, double *output_mag, double *output_phase)
 		output_phase[loop] = (real == 0 && img == 0) ? 0 : atan2(real, img);
 	}
 }
+#endif
