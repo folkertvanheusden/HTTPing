@@ -1,4 +1,6 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
+#include "config.h"
+#ifndef NO_SSL
 #include <errno.h>
 #include <libintl.h>
 #include <string.h>
@@ -421,3 +423,4 @@ int connect_ssl_proxy(const int fd, struct addrinfo *const ai, const double time
 
 	return RC_OK;
 }
+#endif
