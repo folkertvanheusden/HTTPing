@@ -1,0 +1,19 @@
+#pragma once
+
+#define NAME "@PROJECT_NAME@"
+
+#cmakedefine01 FFTW3_FOUND
+#define HAVE_FFTW3 FFTW3_FOUND
+
+#cmakedefine01 NCURSES_FOUND
+#define HAVE_NCURSES NCURSES_FOUND
+
+#cmakedefine01 SSL_FOUND
+#define HAVE_SSL SSL_FOUND
+
+#cmakedefine01 OPENSSL_FOUND
+#define HAVE_OPENSSL OPENSSL_FOUND
+
+#if !(HAVE_SSL && HAVE_OPENSSL)
+#define NO_SSL
+#endif

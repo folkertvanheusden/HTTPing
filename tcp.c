@@ -159,7 +159,6 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 	to.tv_usec = (long)(timeout * 1000.0) % 1000000;
 
 	/* connect to peer */
-#ifdef TCP_TFO
 	if (tfo && *tfo)
 	{
 		rc = sendto(fd, msg, msg_len, MSG_FASTOPEN, ai -> ai_addr, ai -> ai_addrlen);
@@ -175,14 +174,7 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 			goto old_connect;
 		}
 	}
-			
 	else
-#else
-	(void)tfo;
-	(void)msg;
-	(void)msg_len;
-	(void)msg_accepted;
-#endif
 	{
 		int rc = -1;
 

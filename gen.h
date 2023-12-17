@@ -25,19 +25,6 @@
 #define PI (4 * atan(1.0))
 #define MY_DOUBLE_INF	999999999999999.9
 
-#ifdef TCP_TFO
-	#ifndef MSG_FASTOPEN
-		#define MSG_FASTOPEN	0x20000000
-	#endif
-
-	#ifndef TCP_FASTOPEN
-		#define TCP_FASTOPEN	23
-	#endif
-	#ifndef TCPI_OPT_SYN_DATA
-		#define TCPI_OPT_SYN_DATA	32
-	#endif
-#endif
-
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
