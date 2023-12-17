@@ -430,10 +430,13 @@ void interpret_url(const char *in, char **path, char **hostname, int *portnr, ch
 		*dummy = 0x00;
 
 	/* fetch port number */
-	if (use_ssl || strncasecmp(in, "https://", 8) == 0)
-		*portnr = 443;
-	else
-		*portnr = 80;
+	if (*portnr == 0)
+	{
+		if (use_ssl || strncasecmp(in, "https://", 8) == 0)
+			*portnr = 443;
+		else
+			*portnr = 80;
+	}
 
 	if (!use_ipv6)
 	{
@@ -890,7 +893,7 @@ int main(int argc, char *argv[])
 	char *hostname = NULL;
 	char *proxy_host = NULL, *proxy_user = NULL, *proxy_password = NULL;
 	int proxy_port = 8080;
-	int portnr = 80;
+	int portnr = 0;
 	char *get = NULL, *request = NULL;
 	int req_len = 0;
 	int c = 0;
