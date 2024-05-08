@@ -2151,8 +2151,10 @@ persistent_loop:
 #if defined(linux) || defined(__FreeBSD__)
 			if (getsockopt(fd, IPPROTO_TCP, TCP_INFO, &info, &info_len) == 0)
 			{
+#ifdef TCPI_OPT_SYN_DATA
 				if (info.tcpi_options & TCPI_OPT_SYN_DATA)
 					tfo_success = 1;
+#endif
 
 				update_statst(&tcp_rtt_stats, (double)info.tcpi_rtt / 1000.0);
 

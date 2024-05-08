@@ -161,13 +161,20 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 	/* connect to peer */
 	if (tfo && *tfo)
 	{
+#if defined(__FreeBSD__)
+		int enable = 1;                                                                                                                                                                                             
+		setsockopt(fd, IPPROTO_TCP, TCP_FASTOPEN, &enable, sizeof(enable));                                                                                                                                         
+
+		rc = sendto(fd, msg, msg_len, 0, ai->ai_addr, ai->ai_addrlen);                                                                                                                                              
+#else
 		rc = sendto(fd, msg, msg_len, MSG_FASTOPEN, ai -> ai_addr, ai -> ai_addrlen);
+#endif
 		
-		if(rc == msg_len)
+		if (rc == msg_len)
 			*msg_accepted = 1;
-		if(errno == 0)
+		if (errno == 0)
 			return RC_OK;
-		if(errno == ENOTSUP)
+		if (errno == ENOTSUP)
 		{
 			printf(gettext("TCP TFO Not Supported. Please check if \"/proc/sys/net/ipv4/tcp_fastopen\" is 1. Disabling TFO for now.\n"));
 			*tfo = 0;
