@@ -8,25 +8,9 @@ add_definitions(-DVERSION=\"${VERSION}\")
 
 add_definitions(-DLOCALEDIR=\"/usr/share/locale\")
 
-add_executable(
-	httping
-	colors.c
-	cookies.c
-	error.c
-	fft.c
-	gen.c
-	help.c
-	http.c
-	io.c
-	kalman.c
-	main.c
-	mssl.c
-	nc.c
-	res.c
-	socks5.c
-	tcp.c
-	utils.c
-)
+set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
+
+add_executable(httping ${SOURCES})
 
 set(CMAKE_BUILD_TYPE Debug)
 
