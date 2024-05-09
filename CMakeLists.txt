@@ -9,12 +9,10 @@ add_definitions(-DVERSION=\"${VERSION}\")
 add_definitions(-DLOCALEDIR=\"/usr/share/locale\")
 
 set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
-
 add_executable(httping ${SOURCES})
+target_link_libraries(httping m)
 
 set(CMAKE_BUILD_TYPE Debug)
-
-target_link_libraries(httping m)
 
 include(FindPkgConfig)
 
@@ -47,3 +45,10 @@ execute_process (
 
 configure_file(config.h.in config.h)
 target_include_directories(httping PUBLIC "${PROJECT_BINARY_DIR}")
+
+include(GNUInstallDirs)
+install(TARGETS httping DESTINATION bin)
+install(FILES README.md LICENSE plot-json.py DESTINATION ${CMAKE_INSTALL_DOCDIR})
+install(FILES httping.1 DESTINATION ${CMAKE_INSTALL_MANDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
