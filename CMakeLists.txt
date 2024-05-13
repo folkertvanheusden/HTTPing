@@ -12,9 +12,17 @@ set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c 
 add_executable(httping ${SOURCES})
 target_link_libraries(httping m)
 
-set(CMAKE_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+endif()
 
 include(FindPkgConfig)
+
+find_package(Gettext REQUIRED)
+find_library(INTL_LIBRARY NAMES intl)
+if(INTL_LIBRARY)
+    target_link_libraries(httping ${INTL_LIBRARY})
+endif()
 
 pkg_check_modules(NCURSES ncurses)
 target_link_libraries(httping ${NCURSES_LIBRARIES})
