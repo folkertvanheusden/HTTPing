@@ -12,7 +12,9 @@ set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c 
 add_executable(httping ${SOURCES})
 target_link_libraries(httping m)
 
-set(CMAKE_BUILD_TYPE Debug)
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+endif()
 
 include(FindPkgConfig)
 
