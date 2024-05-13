@@ -18,8 +18,8 @@ endif()
 
 include(FindPkgConfig)
 
-pkg_check_modules(GETTEXT libintl)
-target_include_directories(httping PUBLIC ${GETTEXT_INCLUDE_DIRS})
+find_package(Gettext REQUIRED)
+find_package_with_target(Intl REQUIRED)
 
 pkg_check_modules(NCURSES ncurses)
 target_link_libraries(httping ${NCURSES_LIBRARIES})
