@@ -19,7 +19,10 @@ endif()
 include(FindPkgConfig)
 
 find_package(Gettext REQUIRED)
-find_package_with_target(Intl REQUIRED)
+find_library(INTL_LIBRARY NAMES intl)
+if(INTL_LIBRARY)
+    target_link_libraries(httping ${INTL_LIBRARY})
+endif()
 
 pkg_check_modules(NCURSES ncurses)
 target_link_libraries(httping ${NCURSES_LIBRARIES})
