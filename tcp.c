@@ -161,15 +161,15 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 	/* connect to peer */
 	if (tfo && *tfo)
 	{
-#if defined(__FreeBSD__)
-		int enable = 1;                                                                                                                                                                                             
-		setsockopt(fd, IPPROTO_TCP, TCP_FASTOPEN, &enable, sizeof(enable));                                                                                                                                         
+#if defined(__FreeBSD__) || defined(__APPLE__)
+		int enable = 1;
+		setsockopt(fd, IPPROTO_TCP, TCP_FASTOPEN, &enable, sizeof(enable));
 
-		rc = sendto(fd, msg, msg_len, 0, ai->ai_addr, ai->ai_addrlen);                                                                                                                                              
+		rc = sendto(fd, msg, msg_len, 0, ai->ai_addr, ai->ai_addrlen);
 #else
 		rc = sendto(fd, msg, msg_len, MSG_FASTOPEN, ai -> ai_addr, ai -> ai_addrlen);
 #endif
-		
+
 		if (rc == msg_len)
 			*msg_accepted = 1;
 		if (errno == 0)
