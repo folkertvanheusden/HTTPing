@@ -2,7 +2,7 @@
 #include "config.h"
 #ifndef NO_SSL
 #include <errno.h>
-#include <libintl.h>
+#include "gen.h"
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>

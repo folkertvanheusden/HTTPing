@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <libintl.h>
+#include "gen.h"
 #include <netdb.h>
 #include <errno.h>
 #include <stdio.h>

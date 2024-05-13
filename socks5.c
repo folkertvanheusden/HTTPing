@@ -1,4 +1,4 @@
-#include <libintl.h>
+#include "gen.h"
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>

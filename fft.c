@@ -1,6 +1,6 @@
 #include "config.h"
 #if HAVE_FFTW3
-#include <libintl.h>
+#include "gen.h"
 #include <math.h>
 #include <stdlib.h>
 #include <string.h>

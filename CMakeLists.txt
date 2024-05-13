@@ -38,12 +38,16 @@ target_link_libraries(httping ${OPENSSL_LIBRARIES})
 target_include_directories(httping PUBLIC ${OPENSSL_INCLUDE_DIRS})
 target_compile_options(httping PUBLIC ${OPENSSL_CFLAGS_OTHER})
 
+if (USE_GETTEXT)
+add_definitions(-DUSE_GETTEXT=1)
+
 execute_process (
     COMMAND bash -c "msgfmt -o nl.mo ${CMAKE_SOURCE_DIR}/nl.po"
 )
 execute_process (
     COMMAND bash -c "msgfmt -o ru.mo ${CMAKE_SOURCE_DIR}/ru.po"
 )
+endif ()
 
 configure_file(config.h.in config.h)
 target_include_directories(httping PUBLIC "${PROJECT_BINARY_DIR}")
@@ -52,5 +56,7 @@ include(GNUInstallDirs)
 install(TARGETS httping DESTINATION bin)
 install(FILES README.md LICENSE plot-json.py DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES httping.1 DESTINATION ${CMAKE_INSTALL_MANDIR})
+if (USE_GETTEXT)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
+endif ()
