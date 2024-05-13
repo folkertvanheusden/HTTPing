@@ -18,6 +18,9 @@ endif()
 
 include(FindPkgConfig)
 
+pkg_check_modules(GETTEXT libintl)
+target_include_directories(httping PUBLIC ${GETTEXT_INCLUDE_DIRS})
+
 pkg_check_modules(NCURSES ncurses)
 target_link_libraries(httping ${NCURSES_LIBRARIES})
 target_include_directories(httping PUBLIC ${NCURSES_INCLUDE_DIRS})
