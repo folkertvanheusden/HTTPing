@@ -16,6 +16,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include(FindPkgConfig)
 
+if (USE_TUI)
 pkg_check_modules(NCURSES ncurses)
 target_link_libraries(httping ${NCURSES_LIBRARIES})
 target_include_directories(httping PUBLIC ${NCURSES_INCLUDE_DIRS})
@@ -25,6 +26,7 @@ pkg_check_modules(FFTW3 fftw3)
 target_link_libraries(httping ${FFTW3_LIBRARIES})
 target_include_directories(httping PUBLIC ${FFTW3_INCLUDE_DIRS})
 target_compile_options(httping PUBLIC ${FFTW3_CFLAGS_OTHER})
+endif ()
 
 pkg_check_modules(SSL libssl)
 target_link_libraries(httping ${SSL_LIBRARIES})

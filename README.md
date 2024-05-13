@@ -10,3 +10,9 @@ Compiling:
 * cd build
 * cmake ..
 * make
+
+If you would like the TUI (text user interface) to be included (for -K),
+use:
+* cmake -DUSE_TUI=1 ..
+
+
