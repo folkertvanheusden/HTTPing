@@ -42,10 +42,10 @@ if (USE_GETTEXT)
 add_definitions(-DUSE_GETTEXT=1)
 
 execute_process (
-    COMMAND bash -c "msgfmt -o nl.mo ${CMAKE_SOURCE_DIR}/nl.po"
+    COMMAND sh -c "msgfmt -o nl.mo ${CMAKE_SOURCE_DIR}/nl.po"
 )
 execute_process (
-    COMMAND bash -c "msgfmt -o ru.mo ${CMAKE_SOURCE_DIR}/ru.po"
+    COMMAND sh -c "msgfmt -o ru.mo ${CMAKE_SOURCE_DIR}/ru.po"
 )
 endif ()
 
