@@ -6,7 +6,7 @@ project(httping LANGUAGES C)
 file (STRINGS "version" VERSION)
 add_definitions(-DVERSION=\"${VERSION}\")
 
-add_definitions(-DLOCALEDIR=\"/usr/share/locale\")
+add_definitions(-DLOCALEDIR=\"/usr/local/share/locale\")
 
 set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
 add_executable(httping ${SOURCES})
@@ -46,16 +46,10 @@ target_link_libraries(httping ${OPENSSL_LIBRARIES})
 target_include_directories(httping PUBLIC ${OPENSSL_INCLUDE_DIRS})
 target_compile_options(httping PUBLIC ${OPENSSL_CFLAGS_OTHER})
 
+include(GNUInstallDirs)
+
 if (USE_GETTEXT)
 add_definitions(-DUSE_GETTEXT=1)
-
-#execute_process (
-#    COMMAND sh -c "msgfmt -o nl.mo ${CMAKE_SOURCE_DIR}/nl.po"
-#)
-#execute_process (
-#    COMMAND sh -c "msgfmt -o ru.mo ${CMAKE_SOURCE_DIR}/ru.po"
-#)
-
 
 FIND_PROGRAM(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
 
@@ -63,7 +57,7 @@ IF(NOT GETTEXT_MSGFMT_EXECUTABLE)
     MESSAGE("------ NOTE: msgfmt not found. Translations will *not* be installed ------")
 ELSE(NOT GETTEXT_MSGFMT_EXECUTABLE)
 
-	SET(catalogname rkward)
+	SET(catalogname httping)
 
   FILE(GLOB PO_FILES *.po)
   SET(GMO_FILES)
@@ -80,7 +74,7 @@ ELSE(NOT GETTEXT_MSGFMT_EXECUTABLE)
       ADD_CUSTOM_COMMAND(OUTPUT ${_gmoFile}
         COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --check -o ${_gmoFile} ${_poFile}
         DEPENDS ${_poFile})
-      INSTALL(FILES ${_gmoFile} DESTINATION ${LOCALE_INSTALL_DIR}/${_langCode}/LC_MESSAGES/ RENAME ${catalogname}.mo)
+      INSTALL(FILES ${_gmoFile} DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/${_langCode}/LC_MESSAGES/ RENAME ${catalogname}.mo)
       LIST(APPEND GMO_FILES ${_gmoFile})
     ENDIF( _langCode )
 
@@ -98,11 +92,10 @@ endif ()
 configure_file(config.h.in config.h)
 target_include_directories(httping PUBLIC "${PROJECT_BINARY_DIR}")
 
-include(GNUInstallDirs)
 install(TARGETS httping DESTINATION bin)
 install(FILES README.md LICENSE plot-json.py DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES httping.1 DESTINATION ${CMAKE_INSTALL_MANDIR})
 if (USE_GETTEXT)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
+	#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
+	#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
 endif ()
