@@ -11,11 +11,12 @@ add_definitions(-DLOCALEDIR=\"/usr/share/locale\")
 set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
 add_executable(httping ${SOURCES})
 
-if (BSD)
-target_link_libraries(httping intl m)
-else()
 target_link_libraries(httping m)
-endif()
+
+find_package(Intl REQUIRED)
+find_package(Gettext REQUIRED)
+include_directories(${INTL_INCLUDE_DIRS})
+link_directories(${INTL_LIBRARY_DIRS})
 
 set(CMAKE_BUILD_TYPE Debug)
 
