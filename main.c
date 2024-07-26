@@ -128,11 +128,13 @@ void emit_statuslines(double run_time)
 void emit_headers(char *in)
 {
 #if HAVE_NCURSES
-	static char shown = 0;
 	int len_in = -1;
 
-	if (!shown && ncurses_mode && in != NULL && (len_in = strlen(in) - 4) > 0)
+	if (ncurses_mode && in != NULL && (len_in = strlen(in) - 4) > 0)
 	{
+		extern WINDOW *w_slow;
+		werase(w_slow);
+
 		int pos = 0, pos_out = 0;
 		char *copy = (char *)malloc(len_in + 1), *dummy = NULL;
 
@@ -152,8 +154,6 @@ void emit_headers(char *in)
 		slow_log("\n%s", copy);
 
 		free(copy);
-
-		shown = 1;
 	}
 #else
 	(void)in;
