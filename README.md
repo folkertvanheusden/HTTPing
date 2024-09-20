@@ -17,3 +17,6 @@ use:
 
 If you want httping to use local translations, add "-DUSE_GETTEXT=1" to
 the cmake commandline.
+
+
+The AGPL v3.0 license applies to this software.
