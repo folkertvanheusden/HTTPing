@@ -970,6 +970,7 @@ int main(int argc, char *argv[])
 	struct addrinfo *ai_proxy = NULL, *ai_use_proxy = NULL;
 	char http2 = 0;
 	char use_median = 0;
+	char ignore_ssl_errors = 0;
 
 	static struct option long_options[] =
 	{
@@ -992,6 +993,7 @@ int main(int argc, char *argv[])
 		{"show-kb",	0, NULL, 'X' },
 		{"no-cache",	0, NULL, 'Z' },
 #ifndef NO_SSL
+		{"insecure",	0, NULL, 'k' },
 		{"use-ssl",	0, NULL, 'l' },
 		{"show-fingerprint",	0, NULL, 'z' },
 #endif
@@ -1068,7 +1070,7 @@ int main(int argc, char *argv[])
 
 	signal(SIGPIPE, SIG_IGN);
 
-	while((c = getopt_long(argc, argv, "2DKEA5MvYWT:ZQ6Sy:XL:bBg:h:p:c:i:Gx:t:o:e:falqsmV?I:R:rn:N:zP:U:C:F", long_options, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "2DKEA5MvYWT:ZQ6Sy:XL:bBg:h:p:c:i:Gx:t:o:e:falqsmV?I:R:rn:N:zP:U:C:Fk", long_options, NULL)) != -1)
 	{
 		switch(c)
 		{
@@ -1356,6 +1358,10 @@ int main(int argc, char *argv[])
 
 			case 's':
 				show_statuscodes = 1;
+				break;
+
+			case 'k':
+				ignore_ssl_errors = 1;
 				break;
 
 			case 'V':
@@ -1792,7 +1798,7 @@ persistent_loop:
 #ifndef NO_SSL
 				if (use_ssl && ssl_h == NULL)
 				{
-					int rc = connect_ssl(fd, client_ctx, &ssl_h, &s_bio, timeout, &ssl_handshake, hostname);
+					int rc = connect_ssl(fd, client_ctx, &ssl_h, &s_bio, timeout, &ssl_handshake, hostname, ignore_ssl_errors);
 					if (rc == 0)
 						update_statst(&t_ssl, ssl_handshake);
 					else

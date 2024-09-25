@@ -187,7 +187,7 @@ int WRITE_SSL(SSL *const ssl_h, const char *wherefrom, int len, const double tim
 	return cnt;
 }
 
-int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO **const s_bio, const double timeout, double *const ssl_handshake, char *const hostname)
+int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO **const s_bio, const double timeout, double *const ssl_handshake, char *const hostname, const char ignore_ssl_errors)
 {
 	double dstart = get_ts();
 	double end = get_ts() + timeout;
@@ -269,7 +269,7 @@ int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO 
 		set_error(gettext("SSL no peer certificate"));
 
 	long v = SSL_get_verify_result(*ssl_h);
-	if (v != X509_V_OK)
+	if (v != X509_V_OK && ignore_ssl_errors == 0)
 		set_error(gettext("SSL certificate validation failed: %s"), X509_verify_cert_error_string(v));
 
 	if (got_sigquit)
