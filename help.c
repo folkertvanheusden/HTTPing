@@ -71,7 +71,9 @@ void version(void)
 #endif
 #endif
 
+#ifndef NO_TFO
 	fprintf(stderr, gettext(" * TFO (TCP fast open) support included (-F)\n"));
+#endif
 	fprintf(stderr, gettext("\n"));
 }
 
@@ -207,7 +209,9 @@ void usage(const char *me)
 	format_help("-r", "--resolve-once", gettext("resolve hostname only once (useful when pinging roundrobin DNS: also takes the first DNS lookup out of the loop so that the first measurement is also correct)"));
 	format_help("-W", NULL, gettext("do not abort the program if resolving failed: keep retrying"));
 	format_help("-y x", "--bind-to", gettext("bind to an ip-address (and thus interface) with an optional port"));
+#ifndef NO_TFO
 	format_help("-F", "--tcp-fast-open", gettext("\"TCP fast open\" (TFO), reduces the latency of TCP connects"));
+#endif
 #ifdef linux
 	format_help(NULL, "--priority", gettext("set priority of packets"));
 #endif
