@@ -13,11 +13,12 @@ add_executable(httping ${SOURCES})
 
 target_link_libraries(httping m)
 
-if (USE_GETTEXT)
 find_package(Intl REQUIRED)
+target_link_libraries(httping ${Intl_LIBRARIES})
+target_include_directories(httping PUBLIC ${Intl_INCLUDE_DIRS})
+
+if (USE_GETTEXT)
 find_package(Gettext REQUIRED)
-include_directories(${INTL_INCLUDE_DIRS})
-link_directories(${INTL_LIBRARY_DIRS})
 endif()
 
 set(CMAKE_BUILD_TYPE Debug)
