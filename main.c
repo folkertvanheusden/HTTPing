@@ -1,7 +1,10 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
 
 #include "config.h"
+#include <libintl.h>
 #define _GNU_SOURCE
+#define __USE_XOPEN
+#include <time.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <locale.h>
@@ -24,7 +27,6 @@
 #include "mssl.h"
 #endif
 #include <arpa/inet.h>
-#include <time.h>
 #include <sys/time.h>
 #if defined(sun) || defined(__sun)
 #include <sys/termios.h>
