@@ -14,8 +14,7 @@ add_executable(httping ${SOURCES})
 target_link_libraries(httping m)
 
 find_package(Intl REQUIRED)
-target_link_libraries(httping ${Intl_LIBRARIES})
-target_include_directories(httping PUBLIC ${Intl_INCLUDE_DIRS})
+target_link_libraries(httping Intl::Intl)
 
 if (USE_GETTEXT)
 find_package(Gettext REQUIRED)
