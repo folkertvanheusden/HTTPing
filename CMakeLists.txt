@@ -36,15 +36,8 @@ target_include_directories(httping PUBLIC ${FFTW3_INCLUDE_DIRS})
 target_compile_options(httping PUBLIC ${FFTW3_CFLAGS_OTHER})
 endif ()
 
-pkg_check_modules(SSL libssl)
-target_link_libraries(httping ${SSL_LIBRARIES})
-target_include_directories(httping PUBLIC ${SSL_INCLUDE_DIRS})
-target_compile_options(httping PUBLIC ${SSL_CFLAGS_OTHER})
-
-pkg_check_modules(OPENSSL openssl)
-target_link_libraries(httping ${OPENSSL_LIBRARIES})
-target_include_directories(httping PUBLIC ${OPENSSL_INCLUDE_DIRS})
-target_compile_options(httping PUBLIC ${OPENSSL_CFLAGS_OTHER})
+find_package(OpenSSL REQUIRED)
+target_link_libraries(httping OpenSSL::SSL OpenSSL::Crypto)
 
 include(GNUInstallDirs)
 
