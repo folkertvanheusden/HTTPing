@@ -159,6 +159,12 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 	to.tv_usec = (long)(timeout * 1000.0) % 1000000;
 
 	/* connect to peer */
+#ifdef NO_TFO
+	(void)tfo;
+	(void)msg;
+	(void)msg_len;
+	(void)msg_accepted;
+#else
 	if (tfo && *tfo)
 	{
 #if defined(__FreeBSD__)
@@ -182,6 +188,7 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 		}
 	}
 	else
+#endif
 	{
 		int rc = -1;
 
