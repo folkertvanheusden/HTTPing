@@ -36,8 +36,6 @@ void shutdown_ssl(void)
 
 	ERR_free_strings();
 
-	ERR_remove_state(0);
-	ENGINE_cleanup();
 	CONF_modules_free();
 	EVP_cleanup();
 	CRYPTO_cleanup_all_ex_data();
