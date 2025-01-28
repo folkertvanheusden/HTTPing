@@ -3,6 +3,10 @@ cmake_minimum_required(VERSION 3.9)
 add_compile_options(-Wall -pedantic -Wextra)
 
 project(httping LANGUAGES C)
+
+# Create compile_commands.json file
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
 file (STRINGS "version" VERSION)
 add_definitions(-DVERSION=\"${VERSION}\")
 
