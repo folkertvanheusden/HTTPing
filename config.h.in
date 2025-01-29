@@ -2,6 +2,8 @@
 
 #define NAME "@PROJECT_NAME@"
 
+#define VERSION "@PROJECT_VERSION@"
+
 #cmakedefine01 FFTW3_FOUND
 #define HAVE_FFTW3 FFTW3_FOUND
 
