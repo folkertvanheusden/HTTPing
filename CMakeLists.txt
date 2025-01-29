@@ -7,7 +7,7 @@ project(httping LANGUAGES C)
 # Create compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
-file (STRINGS "version" VERSION)
+file(STRINGS "version" VERSION)
 add_definitions(-DVERSION=\"${VERSION}\")
 
 add_definitions(-DLOCALEDIR=\"/usr/local/share/locale\")
@@ -20,7 +20,7 @@ target_link_libraries(httping m)
 find_package(Intl REQUIRED)
 target_link_libraries(httping Intl::Intl)
 
-if (USE_GETTEXT)
+if(USE_GETTEXT)
 find_package(Gettext REQUIRED)
 endif()
 
@@ -28,7 +28,7 @@ set(CMAKE_BUILD_TYPE Debug)
 
 include(FindPkgConfig)
 
-if (USE_TUI)
+if(USE_TUI)
 pkg_check_modules(NCURSES ncurses)
 target_link_libraries(httping ${NCURSES_LIBRARIES})
 target_include_directories(httping PUBLIC ${NCURSES_INCLUDE_DIRS})
@@ -38,14 +38,14 @@ pkg_check_modules(FFTW3 fftw3)
 target_link_libraries(httping ${FFTW3_LIBRARIES})
 target_include_directories(httping PUBLIC ${FFTW3_INCLUDE_DIRS})
 target_compile_options(httping PUBLIC ${FFTW3_CFLAGS_OTHER})
-endif ()
+endif()
 
 find_package(OpenSSL REQUIRED)
 target_link_libraries(httping OpenSSL::SSL OpenSSL::Crypto)
 
 include(GNUInstallDirs)
 
-if (USE_GETTEXT)
+if(USE_GETTEXT)
 add_definitions(-DUSE_GETTEXT=1)
 
 FIND_PROGRAM(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
@@ -80,7 +80,7 @@ ELSE(NOT GETTEXT_MSGFMT_EXECUTABLE)
   ADD_CUSTOM_TARGET(translations ALL DEPENDS ${GMO_FILES})
 
 ENDIF(NOT GETTEXT_MSGFMT_EXECUTABLE)
-endif ()
+endif()
 
 
 
@@ -92,7 +92,7 @@ target_include_directories(httping PUBLIC "${PROJECT_BINARY_DIR}")
 install(TARGETS httping DESTINATION bin)
 install(FILES README.md LICENSE plot-json.py DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES httping.1 DESTINATION ${CMAKE_INSTALL_MANDIR})
-if (USE_GETTEXT)
+if(USE_GETTEXT)
 	#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
 	#install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
-endif ()
+endif()
