@@ -48,39 +48,39 @@ include(GNUInstallDirs)
 if(USE_GETTEXT)
 add_definitions(-DUSE_GETTEXT=1)
 
-FIND_PROGRAM(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
+find_program(GETTEXT_MSGFMT_EXECUTABLE msgfmt)
 
-IF(NOT GETTEXT_MSGFMT_EXECUTABLE)
-    MESSAGE("------ NOTE: msgfmt not found. Translations will *not* be installed ------")
-ELSE(NOT GETTEXT_MSGFMT_EXECUTABLE)
+if(NOT GETTEXT_MSGFMT_EXECUTABLE)
+    message("------ NOTE: msgfmt not found. Translations will *not* be installed ------")
+else(NOT GETTEXT_MSGFMT_EXECUTABLE)
 
-	SET(catalogname httping)
+	set(catalogname httping)
 
-  FILE(GLOB PO_FILES *.po)
-  SET(GMO_FILES)
+  file(GLOB PO_FILES *.po)
+  set(GMO_FILES)
 
-  FOREACH(_poFile ${PO_FILES})
-    GET_FILENAME_COMPONENT(_poFileName ${_poFile} NAME)
-    STRING(REGEX REPLACE "^${catalogname}_?" "" _langCode ${_poFileName} )
-    STRING(REGEX REPLACE "\\.po$" "" _langCode ${_langCode} )
+  foreach(_poFile ${PO_FILES})
+    get_filename_component(_poFileName ${_poFile} NAME)
+    string(REGEX REPLACE "^${catalogname}_?" "" _langCode ${_poFileName} )
+    string(REGEX REPLACE "\\.po$" "" _langCode ${_langCode} )
 
-    IF( _langCode )
-      GET_FILENAME_COMPONENT(_lang ${_poFile} NAME_WE)
-      SET(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_lang}.gmo)
+    if( _langCode )
+      get_filename_component(_lang ${_poFile} NAME_WE)
+      set(_gmoFile ${CMAKE_CURRENT_BINARY_DIR}/${_lang}.gmo)
 
-      ADD_CUSTOM_COMMAND(OUTPUT ${_gmoFile}
+      add_custom_command(OUTPUT ${_gmoFile}
         COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} --check -o ${_gmoFile} ${_poFile}
         DEPENDS ${_poFile})
-      INSTALL(FILES ${_gmoFile} DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/${_langCode}/LC_MESSAGES/ RENAME ${catalogname}.mo)
-      LIST(APPEND GMO_FILES ${_gmoFile})
-    ENDIF( _langCode )
+      install(FILES ${_gmoFile} DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/${_langCode}/LC_MESSAGES/ RENAME ${catalogname}.mo)
+      list(APPEND GMO_FILES ${_gmoFile})
+    endif( _langCode )
 
-  ENDFOREACH(_poFile ${PO_FILES})
+  endforeach(_poFile ${PO_FILES})
 
-  ADD_CUSTOM_TARGET(translations ALL DEPENDS ${GMO_FILES})
+  add_custom_target(translations ALL DEPENDS ${GMO_FILES})
 
-ENDIF(NOT GETTEXT_MSGFMT_EXECUTABLE)
-endif()
+endif(NOT GETTEXT_MSGFMT_EXECUTABLE)
+endif(USE_GETTEXT)
 
 
 
