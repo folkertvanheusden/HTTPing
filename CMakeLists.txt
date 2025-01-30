@@ -7,6 +7,11 @@ project(httping LANGUAGES C VERSION "4.2.0")
 # Create compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+option(USE_TUI "Enable text user interface" OFF)
+option(USE_FFTW3 "Enable FFTW3 backend (depedns on USE_TUI)" OFF)
+option(USE_SSL "Enable SSL support" OFF)
+option(USE_GETTEXT "Enable interantionalization" OFF)
+
 add_definitions(-DLOCALEDIR=\"/usr/local/share/locale\")
 
 set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
@@ -14,11 +19,11 @@ add_executable(httping ${SOURCES})
 
 target_link_libraries(httping m)
 
-find_package(Intl REQUIRED)
-target_link_libraries(httping Intl::Intl)
-
 if(USE_GETTEXT)
   find_package(Gettext REQUIRED)
+
+  find_package(Intl REQUIRED)
+  target_link_libraries(httping Intl::Intl)
 endif()
 
 set(CMAKE_BUILD_TYPE Debug)
@@ -26,19 +31,23 @@ set(CMAKE_BUILD_TYPE Debug)
 include(FindPkgConfig)
 
 if(USE_TUI)
-  pkg_check_modules(NCURSES ncurses)
+  pkg_check_modules(NCURSES REQUIRED ncurses)
   target_link_libraries(httping ${NCURSES_LIBRARIES})
   target_include_directories(httping PUBLIC ${NCURSES_INCLUDE_DIRS})
   target_compile_options(httping PUBLIC ${NCURSES_CFLAGS_OTHER})
 
-  pkg_check_modules(FFTW3 fftw3)
-  target_link_libraries(httping ${FFTW3_LIBRARIES})
-  target_include_directories(httping PUBLIC ${FFTW3_INCLUDE_DIRS})
-  target_compile_options(httping PUBLIC ${FFTW3_CFLAGS_OTHER})
+  if(USE_FFTW3)
+    pkg_check_modules(FFTW3 REQUIRED fftw3)
+    target_link_libraries(httping ${FFTW3_LIBRARIES})
+    target_include_directories(httping PUBLIC ${FFTW3_INCLUDE_DIRS})
+    target_compile_options(httping PUBLIC ${FFTW3_CFLAGS_OTHER})
+  endif()
 endif()
 
-find_package(OpenSSL REQUIRED)
-target_link_libraries(httping OpenSSL::SSL OpenSSL::Crypto)
+if(USE_SSL)
+  find_package(OpenSSL REQUIRED)
+  target_link_libraries(httping OpenSSL::SSL OpenSSL::Crypto)
+endif()
 
 include(GNUInstallDirs)
 
