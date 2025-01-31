@@ -1,0 +1,81 @@
+name: native and cross
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        release:
+        - "ubuntu:20.04"
+        - "ubuntu:22.04"
+        - "ubuntu:24.04"
+        - "ubuntu:rolling"
+        - "debian:oldstable-slim"
+        - "debian:stable-slim"
+        - "debian:testing-slim"
+        - "debian:unstable-slim"
+        - "debian:experimental"
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Prepare ${{ matrix.release }} container
+      env:
+        release: ${{ matrix.release == 'debian:experimental' && '-t experimental' || '' }}
+      run: |
+        podman version
+        podman run --name stable -di --userns=keep-id:uid=1000,gid=1000 -v "$PWD":/home -w /home ${{ matrix.release }} bash
+        podman exec -i stable uname -a
+        podman exec -i stable id
+        podman exec -i -u root stable apt update
+        podman exec -e DEBIAN_FRONTEND='noninteractive' -i -u root stable apt install -o APT::Install-Suggests=false -qy ${release} \
+                clang \
+                cmake \
+                pkg-config \
+                gcc \
+                gcc-aarch64-linux-gnu \
+                gcc-arm-linux-gnueabihf \
+                gcc-mips-linux-gnu \
+                libncurses-dev \
+                fftw-dev \
+                libfftw3-dev \
+                gettext \
+                libssl-dev
+
+    - name: Configure & Build with gcc (minimal configuration)
+      env:
+        cc: gcc
+      run: |
+        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        podman exec -i stable cmake --build build-${cc}
+
+    - name: Configure & Build with gcc (SSL support)
+      env:
+        cc: gcc
+      run: |
+        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
+        podman exec -i stable cmake --build build-${cc}
+
+    - name: Configure & Build with gcc (full TUI support)
+      env:
+        cc: gcc
+      run: |
+        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        podman exec -i stable cmake --build build-${cc}
+
+    - name: Configure & Build with gcc (full TUI support and SSL)
+      env:
+        cc: gcc
+      run: |
+        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF
+        podman exec -i stable cmake --build build-${cc}
+
+    - name: Configure & Build with clang (minimal configuration)
+      env:
+        cc: clang
+      run: |
+        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        podman exec -i stable cmake --build build-${cc}
