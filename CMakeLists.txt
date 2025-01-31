@@ -98,3 +98,10 @@ if(USE_GETTEXT)
   #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
   #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
 endif()
+#
+# setup summary
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+message(STATUS "Use SSL: ${USE_SSL}")
+message(STATUS "Use TUI: ${USE_TUI}")
+message(STATUS "Use FFTW3: ${USE_FFTW3}")
+message(STATUS "Use gettext: ${USE_GETTEXT}")
