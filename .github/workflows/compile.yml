@@ -9,11 +9,9 @@ jobs:
       fail-fast: false
       matrix:
         release:
-        - "ubuntu:20.04"
         - "ubuntu:22.04"
         - "ubuntu:24.04"
         - "ubuntu:rolling"
-        - "debian:oldstable-slim"
         - "debian:stable-slim"
         - "debian:testing-slim"
         - "debian:unstable-slim"
@@ -71,6 +69,13 @@ jobs:
         cc: gcc
       run: |
         podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF
+        podman exec -i stable cmake --build build-${cc}
+
+    - name: Configure & Build with gcc (full TUI support, SSL, and gettext)
+      env:
+        cc: gcc
+      run: |
+        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON
         podman exec -i stable cmake --build build-${cc}
 
     - name: Configure & Build with clang (minimal configuration)
