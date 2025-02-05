@@ -7,6 +7,11 @@ project(httping LANGUAGES C VERSION "4.2.0")
 # Create compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 
+if(NOT PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+  # Git auto-ignore out-of-source build directory
+  file(GENERATE OUTPUT .gitignore CONTENT "*")
+endif()
+
 option(USE_TUI "Enable text user interface" OFF)
 option(USE_FFTW3 "Enable FFTW3 backend (depedns on USE_TUI)" OFF)
 option(USE_SSL "Enable SSL support" OFF)
