@@ -4,6 +4,8 @@
 
 #define VERSION "@PROJECT_VERSION@"
 
+#define LOCALEDIR "@CMAKE_INSTALL_FULL_LOCALEDIR@"
+
 #cmakedefine01 FFTW3_FOUND
 #define HAVE_FFTW3 FFTW3_FOUND
 
@@ -12,6 +14,9 @@
 
 #cmakedefine01 OPENSSL_FOUND
 #define HAVE_OPENSSL OPENSSL_FOUND
+
+#cmakedefine01 INTL_FOUND
+#define HAVE_INTL INTL_FOUND
 
 #if !HAVE_OPENSSL
 #define NO_SSL

@@ -28,7 +28,7 @@
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
-#if USE_GETTEXT
+#if INTL_FOUND
 #include <libintl.h>
 #else
 #define gettext(x) (x)

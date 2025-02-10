@@ -17,8 +17,6 @@ option(USE_FFTW3 "Enable FFTW3 backend (depedns on USE_TUI)" OFF)
 option(USE_SSL "Enable SSL support" OFF)
 option(USE_GETTEXT "Enable interantionalization" OFF)
 
-add_definitions(-DLOCALEDIR=\"/usr/local/share/locale\")
-
 set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
 add_executable(httping ${SOURCES})
 
