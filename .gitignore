@@ -1,4 +1,6 @@
 build
+tags
+compile_commands.json
 
 # Translations
 *.mo

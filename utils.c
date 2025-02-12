@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <sys/time.h>
 #include <time.h>
-#include <libintl.h>
+#include "gen.h"
 
 #include "error.h"
 #include "utils.h"

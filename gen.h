@@ -28,6 +28,12 @@
 #define min(x, y) ((x) < (y) ? (x) : (y))
 #define max(x, y) ((x) > (y) ? (x) : (y))
 
+#if INTL_FOUND
+#include <libintl.h>
+#else
+#define gettext(x) (x)
+#endif
+
 typedef struct
 {
 	double cur, min, avg, max, sd, med;

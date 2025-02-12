@@ -1,11 +1,14 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
 
 #include "config.h"
+#include <libintl.h>
 #define _GNU_SOURCE
+#define __USE_XOPEN
+#include <time.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
 #include <locale.h>
-#include <libintl.h>
+#include "gen.h"
 #include <stdlib.h>
 #include <errno.h>
 #include <math.h>
@@ -24,7 +27,6 @@
 #include "mssl.h"
 #endif
 #include <arpa/inet.h>
-#include <time.h>
 #include <sys/time.h>
 #if defined(sun) || defined(__sun)
 #include <sys/termios.h>
@@ -128,11 +130,13 @@ void emit_statuslines(double run_time)
 void emit_headers(char *in)
 {
 #if HAVE_NCURSES
-	static char shown = 0;
 	int len_in = -1;
 
-	if (!shown && ncurses_mode && in != NULL && (len_in = strlen(in) - 4) > 0)
+	if (ncurses_mode && in != NULL && (len_in = strlen(in) - 4) > 0)
 	{
+		extern WINDOW *w_slow;
+		werase(w_slow);
+
 		int pos = 0, pos_out = 0;
 		char *copy = (char *)malloc(len_in + 1), *dummy = NULL;
 
@@ -152,8 +156,6 @@ void emit_headers(char *in)
 		slow_log("\n%s", copy);
 
 		free(copy);
-
-		shown = 1;
 	}
 #else
 	(void)in;
@@ -970,6 +972,7 @@ int main(int argc, char *argv[])
 	struct addrinfo *ai_proxy = NULL, *ai_use_proxy = NULL;
 	char http2 = 0;
 	char use_median = 0;
+	char ignore_ssl_errors = 0;
 
 	static struct option long_options[] =
 	{
@@ -992,6 +995,7 @@ int main(int argc, char *argv[])
 		{"show-kb",	0, NULL, 'X' },
 		{"no-cache",	0, NULL, 'Z' },
 #ifndef NO_SSL
+		{"insecure",	0, NULL, 'k' },
 		{"use-ssl",	0, NULL, 'l' },
 		{"show-fingerprint",	0, NULL, 'z' },
 #endif
@@ -1068,7 +1072,7 @@ int main(int argc, char *argv[])
 
 	signal(SIGPIPE, SIG_IGN);
 
-	while((c = getopt_long(argc, argv, "2DKEA5MvYWT:ZQ6Sy:XL:bBg:h:p:c:i:Gx:t:o:e:falqsmV?I:R:rn:N:zP:U:C:F", long_options, NULL)) != -1)
+	while((c = getopt_long(argc, argv, "2DKEA5MvYWT:ZQ6Sy:XL:bBg:h:p:c:i:Gx:t:o:e:falqsmV?I:R:rn:N:zP:U:C:Fk", long_options, NULL)) != -1)
 	{
 		switch(c)
 		{
@@ -1356,6 +1360,10 @@ int main(int argc, char *argv[])
 
 			case 's':
 				show_statuscodes = 1;
+				break;
+
+			case 'k':
+				ignore_ssl_errors = 1;
 				break;
 
 			case 'V':
@@ -1792,7 +1800,7 @@ persistent_loop:
 #ifndef NO_SSL
 				if (use_ssl && ssl_h == NULL)
 				{
-					int rc = connect_ssl(fd, client_ctx, &ssl_h, &s_bio, timeout, &ssl_handshake, hostname);
+					int rc = connect_ssl(fd, client_ctx, &ssl_h, &s_bio, timeout, &ssl_handshake, hostname, ignore_ssl_errors);
 					if (rc == 0)
 						update_statst(&t_ssl, ssl_handshake);
 					else

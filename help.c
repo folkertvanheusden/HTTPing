@@ -1,5 +1,5 @@
 #include "config.h"
-#include <libintl.h>
+#include "gen.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -233,6 +233,7 @@ void usage(const char *me)
 	format_help(NULL, "--timestamp / --ts", gettext("put a timestamp before the measured values, use -v to include the date and -vv to show in microseconds"));
 	format_help(NULL, "--aggregate x[,y[,z]]", gettext("show an aggregate each x[/y[/z[/etc]]] seconds"));
 #ifndef NO_SSL
+	format_help("-k", "--insecure", gettext("allow insecure server connections"));
 	format_help("-z", "--show-fingerprint", gettext("show fingerprint (SSL)"));
 	format_help(NULL, "--ca-path", gettext("path to ca certificates (SSL)"));
 #endif

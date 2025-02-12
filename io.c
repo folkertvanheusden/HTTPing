@@ -1,7 +1,7 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
 
 #include <errno.h>
-#include <libintl.h>
+#include "gen.h"
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>

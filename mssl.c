@@ -2,7 +2,7 @@
 #include "config.h"
 #ifndef NO_SSL
 #include <errno.h>
-#include <libintl.h>
+#include "gen.h"
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -36,8 +36,6 @@ void shutdown_ssl(void)
 
 	ERR_free_strings();
 
-	ERR_remove_state(0);
-	ENGINE_cleanup();
 	CONF_modules_free();
 	EVP_cleanup();
 	CRYPTO_cleanup_all_ex_data();
@@ -187,7 +185,7 @@ int WRITE_SSL(SSL *const ssl_h, const char *wherefrom, int len, const double tim
 	return cnt;
 }
 
-int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO **const s_bio, const double timeout, double *const ssl_handshake, char *const hostname)
+int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO **const s_bio, const double timeout, double *const ssl_handshake, char *const hostname, const char ignore_ssl_errors)
 {
 	double dstart = get_ts();
 	double end = get_ts() + timeout;
@@ -269,7 +267,7 @@ int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO 
 		set_error(gettext("SSL no peer certificate"));
 
 	long v = SSL_get_verify_result(*ssl_h);
-	if (v != X509_V_OK)
+	if (v != X509_V_OK && ignore_ssl_errors == 0)
 		set_error(gettext("SSL certificate validation failed: %s"), X509_verify_cert_error_string(v));
 
 	if (got_sigquit)

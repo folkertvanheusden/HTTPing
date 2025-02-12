@@ -6,7 +6,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <arpa/inet.h>
-#include <libintl.h>
+#include "gen.h"
 #include <netdb.h>
 #include <errno.h>
 #include <stdio.h>

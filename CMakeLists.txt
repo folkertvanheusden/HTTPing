@@ -1,62 +1,73 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.12)
 
 add_compile_options(-Wall -pedantic -Wextra)
 
-project(httping LANGUAGES C)
-file (STRINGS "version" VERSION)
-add_definitions(-DVERSION=\"${VERSION}\")
+project(httping LANGUAGES C VERSION "4.2.0")
 
-add_definitions(-DLOCALEDIR=\"/usr/share/locale\")
+# Create compile_commands.json file
+set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+
+if(NOT PROJECT_SOURCE_DIR STREQUAL PROJECT_BINARY_DIR)
+  # Git auto-ignore out-of-source build directory
+  file(GENERATE OUTPUT .gitignore CONTENT "*")
+endif()
+
+option(USE_TUI "Enable text user interface" OFF)
+option(USE_FFTW3 "Enable FFTW3 backend (depedns on USE_TUI)" OFF)
+option(USE_SSL "Enable SSL support" OFF)
+option(USE_GETTEXT "Enable interantionalization" OFF)
 
 set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
 add_executable(httping ${SOURCES})
+
 target_link_libraries(httping m)
 
-if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE Debug CACHE STRING "" FORCE)
+if(USE_GETTEXT)
+  find_package(Gettext REQUIRED)
+
+  find_package(Intl REQUIRED)
+  target_link_libraries(httping Intl::Intl)
 endif()
+
+set(CMAKE_BUILD_TYPE Debug)
 
 include(FindPkgConfig)
 
-find_package(Gettext REQUIRED)
-find_library(INTL_LIBRARY NAMES intl)
-if(INTL_LIBRARY)
-    target_link_libraries(httping ${INTL_LIBRARY})
+if(USE_TUI)
+  pkg_check_modules(NCURSES REQUIRED ncurses)
+  target_link_libraries(httping ${NCURSES_LIBRARIES})
+  target_include_directories(httping PUBLIC ${NCURSES_INCLUDE_DIRS})
+  target_compile_options(httping PUBLIC ${NCURSES_CFLAGS_OTHER})
+
+  if(USE_FFTW3)
+    pkg_check_modules(FFTW3 REQUIRED fftw3)
+    target_link_libraries(httping ${FFTW3_LIBRARIES})
+    target_include_directories(httping PUBLIC ${FFTW3_INCLUDE_DIRS})
+    target_compile_options(httping PUBLIC ${FFTW3_CFLAGS_OTHER})
+  endif()
 endif()
 
-pkg_check_modules(NCURSES ncurses)
-target_link_libraries(httping ${NCURSES_LIBRARIES})
-target_include_directories(httping PUBLIC ${NCURSES_INCLUDE_DIRS})
-target_compile_options(httping PUBLIC ${NCURSES_CFLAGS_OTHER})
+if(USE_SSL)
+  find_package(OpenSSL REQUIRED)
+  target_link_libraries(httping OpenSSL::SSL OpenSSL::Crypto)
+endif()
 
-pkg_check_modules(FFTW3 fftw3)
-target_link_libraries(httping ${FFTW3_LIBRARIES})
-target_include_directories(httping PUBLIC ${FFTW3_INCLUDE_DIRS})
-target_compile_options(httping PUBLIC ${FFTW3_CFLAGS_OTHER})
+include(GNUInstallDirs)
 
-pkg_check_modules(SSL libssl)
-target_link_libraries(httping ${SSL_LIBRARIES})
-target_include_directories(httping PUBLIC ${SSL_INCLUDE_DIRS})
-target_compile_options(httping PUBLIC ${SSL_CFLAGS_OTHER})
-
-pkg_check_modules(OPENSSL openssl)
-target_link_libraries(httping ${OPENSSL_LIBRARIES})
-target_include_directories(httping PUBLIC ${OPENSSL_INCLUDE_DIRS})
-target_compile_options(httping PUBLIC ${OPENSSL_CFLAGS_OTHER})
-
-execute_process (
-    COMMAND bash -c "msgfmt -o nl.mo ${CMAKE_SOURCE_DIR}/nl.po"
-)
-execute_process (
-    COMMAND bash -c "msgfmt -o ru.mo ${CMAKE_SOURCE_DIR}/ru.po"
-)
+if(USE_GETTEXT)
+  add_subdirectory(po)
+endif()
 
 configure_file(config.h.in config.h)
 target_include_directories(httping PUBLIC "${PROJECT_BINARY_DIR}")
 
-include(GNUInstallDirs)
 install(TARGETS httping DESTINATION bin)
 install(FILES README.md LICENSE plot-json.py DESTINATION ${CMAKE_INSTALL_DOCDIR})
 install(FILES httping.1 DESTINATION ${CMAKE_INSTALL_MANDIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/nl.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/ru.mo DESTINATION ${CMAKE_INSTALL_LOCALEDIR})
+
+# setup summary
+message(STATUS "CMake version: ${CMAKE_VERSION}")
+message(STATUS "Use SSL: ${USE_SSL}")
+message(STATUS "Use TUI: ${USE_TUI}")
+message(STATUS "Use FFTW3: ${USE_FFTW3}")
+message(STATUS "Use gettext: ${USE_GETTEXT}")

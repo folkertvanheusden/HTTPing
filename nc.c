@@ -2,7 +2,7 @@
 #if HAVE_NCURSES
 #define _GNU_SOURCE
 #include <stdio.h>
-#include <libintl.h>
+#include "gen.h"
 #include <math.h>
 #include <poll.h>
 #include <stdarg.h>
