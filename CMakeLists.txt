@@ -29,7 +29,10 @@ if(USE_GETTEXT)
   target_link_libraries(httping Intl::Intl)
 endif()
 
-set(CMAKE_BUILD_TYPE Debug)
+# Set default build type to Debug if not specified
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
+endif()
 
 include(FindPkgConfig)
 
