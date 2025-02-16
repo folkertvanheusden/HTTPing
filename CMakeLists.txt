@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.12)
 
 add_compile_options(-Wall -pedantic -Wextra)
 
-project(httping LANGUAGES C VERSION "4.2.0")
+project(httping LANGUAGES C VERSION "4.4.0")
 
 # Create compile_commands.json file
 set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
