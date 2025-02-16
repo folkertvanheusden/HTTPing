@@ -1,7 +1,9 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
 
 #include "config.h"
+#if INTL_FOUND
 #include <libintl.h>
+#endif
 #define _GNU_SOURCE
 #define __USE_XOPEN
 #include <time.h>
@@ -355,11 +357,11 @@ char * create_http_request_header(const char *get, char use_proxy_host, char get
 
 	/* Basic Authentification */
 	if (auth_usr)
-	{ 
+	{
 		char auth_string[256] = { 0 };
 		char b64_auth_string[512] = { 0 };
 
-		sprintf(auth_string, "%s:%s", auth_usr, auth_password); 
+		sprintf(auth_string, "%s:%s", auth_usr, auth_password);
 		enc_b64(auth_string, strlen(auth_string), b64_auth_string);
 
 		str_add(&request, "Authorization: Basic %s\r\n", b64_auth_string);
@@ -367,11 +369,11 @@ char * create_http_request_header(const char *get, char use_proxy_host, char get
 
 	/* proxy authentication */
 	if (proxy_user)
-	{ 
+	{
 		char ppa_string[256] = { 0 };
 		char b64_ppa_string[512] = { 0 };
 
-		sprintf(ppa_string, "%s:%s", proxy_user, proxy_password); 
+		sprintf(ppa_string, "%s:%s", proxy_user, proxy_password);
 		enc_b64(ppa_string, strlen(ppa_string), b64_ppa_string);
 
 		str_add(&request, "Proxy-Authorization: Basic %s\r\n", b64_ppa_string);
@@ -1065,8 +1067,10 @@ int main(int argc, char *argv[])
 	bps.Bps_avg = 0;
 
 	setlocale(LC_ALL, "");
+#if INTL_FOUND
 	bindtextdomain("httping", LOCALEDIR);
 	textdomain("httping");
+#endif
 
 	determine_terminal_size(&max_y, &max_x);
 
