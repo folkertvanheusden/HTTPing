@@ -95,8 +95,22 @@ jobs:
       with:
         usesh: true
         prepare: |
-          pkg install -y cmake pkgconf gettext openssl ncurses
+          pkg install -y cmake pkgconf openssl ncurses
 
-        run: |
-          cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-          cmake --build build
+    - name: Configure & Build with gcc (minimal configuration)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        cmake --build build
+
+    - name: Configure & Build with gcc (SSL support)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
+        cmake --build build --clean-first
+
+    - name: Configure & Build with gcc (TUI support with ncurses)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        cmake --build build --clean-first
