@@ -348,7 +348,7 @@ msgid "json output, cannot be combined with -m"
 msgstr "json вывод, не может быть использовано вместе с -m"
 
 #: help.c:270
-msgid "what http results codes indicate 'ok' comma separated WITHOUT spaces inbetween default is 200, use with -e"
+msgid "what http results codes indicate 'ok' comma separated WITHOUT spaces in between default is 200, use with -e"
 msgstr "какие HTTP коды ответа считать за 'ok'. разделять запятыми БЕЗ пробелов, по умолчанию 200, использовать вместе с -e"
 
 #: help.c:271
@@ -356,11 +356,11 @@ msgid "string to display when http result code doesn't match"
 msgstr "строка для показа когда код ответа HTTP не совпадает"
 
 #: help.c:272
-msgid "Nagios-mode: return 1 when avg. response time >= warn, 2 if >= crit, otherwhise return 0"
+msgid "Nagios-mode: return 1 when avg. response time >= warn, 2 if >= crit, otherwise return 0"
 msgstr "Nagios-mode 1: возвращать 1 когда сред. времени ответа >= \"warn\", 2 когда оно >= \"crit\", в остальных случаях возвращать 0"
 
 #: help.c:273
-msgid "Nagios mode 2: return 0 when all fine, 'x' when anything failes"
+msgid "Nagios mode 2: return 0 when all fine, 'x' when anything fails"
 msgstr "Nagios mode 2: возвращать 0 когда все в порядке, 'x' когда что-то идет не так"
 
 #: help.c:274

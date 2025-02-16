@@ -254,10 +254,10 @@ void usage(const char *me)
 	format_help("-q", "--quiet", gettext("quiet, only returncode"));
 	format_help("-m", "--parseable-output", gettext("give machine parseable output (see also -o and -e)"));
 	format_help("-M", NULL, gettext("json output, cannot be combined with -m"));
-	format_help("-o rc,rc,...", "--ok-result-codes", gettext("what http results codes indicate 'ok' comma separated WITHOUT spaces inbetween default is 200, use with -e"));
+	format_help("-o rc,rc,...", "--ok-result-codes", gettext("what http results codes indicate 'ok' comma separated WITHOUT spaces in between default is 200, use with -e"));
 	format_help("-e x", "--result-string", gettext("string to display when http result code doesn't match"));
-	format_help("-n warn,crit", "--nagios-mode-1 / --nagios-mode-2", gettext("Nagios-mode: return 1 when avg. response time >= warn, 2 if >= crit, otherwhise return 0"));
-	format_help("-N x", NULL, gettext("Nagios mode 2: return 0 when all fine, 'x' when anything failes"));
+	format_help("-n warn,crit", "--nagios-mode-1 / --nagios-mode-2", gettext("Nagios-mode: return 1 when avg. response time >= warn, 2 if >= crit, otherwise return 0"));
+	format_help("-N x", NULL, gettext("Nagios mode 2: return 0 when all fine, 'x' when anything fails"));
 	format_help("-C cookie=value", "--cookie", gettext("add a cookie to the request"));
 	format_help("-Y", "--colors", gettext("add colors"));
 	format_help("-a", "--audible-ping", gettext("audible ping"));
