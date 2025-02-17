@@ -58,7 +58,7 @@ void new_version_alert(void)
 
 void version(void)
 {
-	fprintf(stderr, gettext("HTTPing v" VERSION ", (C) 2003-2023 folkert@vanheusden.com\n"));
+	fprintf(stderr, gettext("HTTPing v" VERSION ", (C) 2003-2025 folkert@vanheusden.com\n"));
 #ifndef NO_SSL
 	fprintf(stderr, gettext(" * SSL support included (-l)\n"));
 #endif
