@@ -5,7 +5,9 @@
 #include <libintl.h>
 #endif
 #define _GNU_SOURCE
+#ifndef __USE_XOPEN
 #define __USE_XOPEN
+#endif
 #include <time.h>
 #include <sys/ioctl.h>
 #include <stdio.h>
