@@ -95,28 +95,30 @@ jobs:
       with:
         usesh: true
         prepare: |
-          pkg install -y cmake pkgconf openssl ncurses gettext-tools
+          pkg install -y cmake pkgconf openssl ncurses gettext-tools fftw3
 
-    - name: Configure & Build with gcc (minimal configuration)
-      run: |
-        rm -fr build
-        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        cmake --build build
+        run: |
+          echo "Configure & Build with gcc (minimal configuration)"
+          rm -fr build
+          cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+          cmake --build build
 
-    - name: Configure & Build with gcc (SSL support)
-      run: |
-        rm -fr build
-        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
-        cmake --build build --clean-first
+          echo "Configure & Build with gcc (SSL support)"
+          rm -fr build
+          cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
+          cmake --build build --clean-first
 
-    - name: Configure & Build with gcc (TUI support with ncurses)
-      run: |
-        rm -fr build
-        cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        cmake --build build --clean-first
+          echo "Configure & Build with gcc (full TUI support)"
+          rm -fr build
+          cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+          cmake --build build --clean-first
 
-    - name: Configure & Build with gcc (Gettext support)
-      run: |
-        rm -fr build
-        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=ON
-        cmake --build build --clean-first
+          echo "Configure & Build with gcc (full TUI support and SSL)"
+          rm -fr build
+          cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF
+          cmake --build build --clean-first
+
+          echo "Configure & Build with gcc (full TUI support, SSL, and gettext)"
+          rm -fr build
+          cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON
+          cmake --build build --clean-first
