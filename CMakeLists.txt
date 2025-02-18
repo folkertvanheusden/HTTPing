@@ -36,11 +36,12 @@ set(SOURCES
 if(USE_SSL)
   set(SOURCES ${SOURCES} mssl.c)
 endif()
-if(USE_FFTW3)
-  set(SOURCES ${SOURCES} fft.c)
-endif()
+
 if(USE_TUI)
   set(SOURCES ${SOURCES} nc.c)
+  if(USE_FFTW3)
+    set(SOURCES ${SOURCES} fft.c)
+  endif()
 endif()
 
 add_executable(httping ${SOURCES})
