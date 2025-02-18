@@ -1,5 +1,4 @@
 #include "config.h"
-#if HAVE_NCURSES
 #define _GNU_SOURCE
 #include <stdio.h>
 #include "gen.h"
@@ -867,4 +866,3 @@ void update_stats(stats_t *resolve, stats_t *connect, stats_t *request, stats_t 
 	if (win_resize || force_redraw)
 		recreate_terminal();
 }
-#endif

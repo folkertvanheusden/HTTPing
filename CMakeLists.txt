@@ -17,7 +17,32 @@ option(USE_FFTW3 "Enable FFTW3 backend (depedns on USE_TUI)" OFF)
 option(USE_SSL "Enable SSL support" OFF)
 option(USE_GETTEXT "Enable interantionalization" OFF)
 
-set(SOURCES  colors.c cookies.c error.c fft.c gen.c help.c http.c io.c kalman.c main.c mssl.c nc.c res.c socks5.c tcp.c utils.c)
+set(SOURCES
+  colors.c
+  cookies.c
+  error.c
+  gen.c
+  help.c
+  http.c
+  io.c
+  kalman.c
+  main.c
+  res.c
+  socks5.c
+  tcp.c
+  utils.c
+)
+
+if(USE_SSL)
+  set(SOURCES ${SOURCES} mssl.c)
+endif()
+if(USE_FFTW3)
+  set(SOURCES ${SOURCES} fft.c)
+endif()
+if(USE_TUI)
+  set(SOURCES ${SOURCES} nc.c)
+endif()
+
 add_executable(httping ${SOURCES})
 
 target_link_libraries(httping m)
