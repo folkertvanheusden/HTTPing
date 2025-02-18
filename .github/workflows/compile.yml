@@ -95,7 +95,7 @@ jobs:
       with:
         usesh: true
         prepare: |
-          pkg install -y cmake pkgconf openssl ncurses
+          pkg install -y cmake pkgconf openssl ncurses gettext-tools
 
     - name: Configure & Build with gcc (minimal configuration)
       run: |
@@ -113,4 +113,10 @@ jobs:
       run: |
         rm -fr build
         cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        cmake --build build --clean-first
+
+    - name: Configure & Build with gcc (Gettext support)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=ON
         cmake --build build --clean-first
