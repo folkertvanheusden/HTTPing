@@ -9,7 +9,31 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Build
+    - name: Prepare build dependencies
       run: |
-        cmake -B build -DUSE_GETTEXT=ON
+        brew update
+        brew install fftw
+
+    - name: Configure and build with clang (minimal configuration)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        cmake --build build
+
+    - name: Configure and build with clang (SSL support)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
+        cmake --build build
+
+    - name: Configure and build with clang (full TUI support)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        cmake --build build
+
+    - name: Configure and build with clang (full TUI support, SSL, and gettext)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON
         cmake --build build
