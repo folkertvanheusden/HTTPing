@@ -16,7 +16,7 @@
 
 #define MAX_SHOW_SUPPRESSION 3
 
-#ifdef NO_SSL
+#if !HAVE_OPENSSL
 	#define SSL	void
 	#define SSL_CTX	void
 	#define BIO	void

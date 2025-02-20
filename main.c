@@ -26,7 +26,7 @@
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <netdb.h>
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 #include <openssl/ssl.h>
 #include "mssl.h"
 #endif
@@ -967,7 +967,7 @@ int main(int argc, char *argv[])
 	int priority = -1, send_tos = -1;
 	char **additional_headers = NULL;
 	int n_additional_headers = 0;
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 	SSL_CTX *client_ctx = NULL;
 #endif
 	const char *ca_path = NULL;
@@ -998,7 +998,7 @@ int main(int argc, char *argv[])
 		{"data-limit",	1, NULL, 'L' },
 		{"show-kb",	0, NULL, 'X' },
 		{"no-cache",	0, NULL, 'Z' },
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 		{"insecure",	0, NULL, 'k' },
 		{"use-ssl",	0, NULL, 'l' },
 		{"show-fingerprint",	0, NULL, 'z' },
@@ -1350,7 +1350,7 @@ int main(int argc, char *argv[])
 				get_instead_of_head = 1;
 				break;
 
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 			case 'l':
 				use_ssl = 1;
 				break;
@@ -1503,7 +1503,7 @@ int main(int argc, char *argv[])
 	if (use_tfo && use_ssl)
 		error_exit(gettext("TCP Fast open and SSL not supported together\n"));
 
-#ifdef NO_SSL
+#if !HAVE_OPENSSL
 	if (use_ssl)
 		error_exit(gettext("HTTPing is compiled without SSL support. Please, use -DUSE_SSL=ON when invoking cmake.\n"));
 #endif
@@ -1528,7 +1528,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 	if (use_ssl)
 	{
 		client_ctx = initialize_ctx(ask_compression, ca_path);
@@ -1769,7 +1769,7 @@ persistent_loop:
 				{
 					if (proxy_is_socks5)
 						rc = socks5connect(fd, ai_dummy, timeout, proxy_user, proxy_password, hostname, portnr, abort_on_resolve_failure);
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 					else if (use_ssl)
 						rc = connect_ssl_proxy(fd, ai_dummy, timeout, proxy_user, proxy_password, hostname, portnr, &use_tfo);
 #endif
@@ -1808,7 +1808,7 @@ persistent_loop:
 					break;
 				}
 
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 				if (use_ssl && ssl_h == NULL)
 				{
 					int rc = connect_ssl(fd, client_ctx, &ssl_h, &s_bio, timeout, &ssl_handshake, hostname, ignore_ssl_errors);
@@ -1855,7 +1855,7 @@ persistent_loop:
 				break;
 			}
 
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 			if (use_ssl)
 				rc = WRITE_SSL(ssl_h, request, req_len, timeout);
 			else
@@ -2146,7 +2146,7 @@ persistent_loop:
 
 			dend = get_ts();
 
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 			if (use_ssl)
 			{
 				if ((show_fp || json_output || ncurses_mode) && ssl_h != NULL)
@@ -2486,7 +2486,7 @@ error_exit:
 
 	free(aggregates);
 
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 	if (use_ssl)
 	{
 		SSL_CTX_free(client_ctx);
