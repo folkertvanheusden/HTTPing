@@ -1503,6 +1503,11 @@ int main(int argc, char *argv[])
 	if (use_tfo && use_ssl)
 		error_exit(gettext("TCP Fast open and SSL not supported together\n"));
 
+#ifdef NO_SSL
+	if (use_ssl)
+		error_exit(gettext("HTTPing is compiled without SSL support. Please, use -DUSE_SSL=ON when invoking cmake.\n"));
+#endif
+
 	if (verbose)
 	{
 #if HAVE_NCURSES
