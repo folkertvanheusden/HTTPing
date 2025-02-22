@@ -32,6 +32,12 @@ jobs:
         cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
         cmake --build build
 
+    - name: Configure and build with clang (FFTW3 without TUI support)
+      run: |
+        rm -fr build
+        cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
+        cmake --build build
+
     - name: Configure and build with clang (full TUI support, SSL, and gettext)
       run: |
         rm -fr build
