@@ -59,7 +59,7 @@ void new_version_alert(void)
 void version(void)
 {
 	fprintf(stderr, gettext("HTTPing v" VERSION ", (C) 2003-2025 folkert@vanheusden.com\n"));
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 	fprintf(stderr, gettext(" * SSL support included (-l)\n"));
 #endif
 
@@ -161,7 +161,7 @@ void usage(const char *me)
 	format_help("-h x", "--hostname", gettext("hostname to ping (e.g. localhost) - use either -g or -h"));
 	format_help("-p x", "--port", gettext("portnumber (e.g. 80) - use with -h"));
 	format_help("-6", "--ipv6", gettext("use IPv6 when resolving/connecting"));
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 	format_help("-l", "--use-ssl", gettext("connect using SSL. pinging an https URL automatically enables this setting"));
 #endif
 	fprintf(stderr, gettext("\n"));
@@ -232,7 +232,7 @@ void usage(const char *me)
 	format_help(NULL, "--threshold-show", gettext("from what ping value to show the results"));
 	format_help(NULL, "--timestamp / --ts", gettext("put a timestamp before the measured values, use -v to include the date and -vv to show in microseconds"));
 	format_help(NULL, "--aggregate x[,y[,z]]", gettext("show an aggregate each x[/y[/z[/etc]]] seconds"));
-#ifndef NO_SSL
+#if HAVE_OPENSSL
 	format_help("-k", "--insecure", gettext("allow insecure server connections"));
 	format_help("-z", "--show-fingerprint", gettext("show fingerprint (SSL)"));
 	format_help(NULL, "--ca-path", gettext("path to ca certificates (SSL)"));

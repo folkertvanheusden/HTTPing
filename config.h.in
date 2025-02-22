@@ -17,7 +17,3 @@
 
 #cmakedefine01 INTL_FOUND
 #define HAVE_INTL INTL_FOUND
-
-#if !HAVE_OPENSSL
-#define NO_SSL
-#endif
