@@ -357,7 +357,7 @@ char * create_http_request_header(const char *get, char use_proxy_host, char get
 		str_add(&request, "Cache-Control: no-cache\r\n");
 	}
 
-	/* Basic Authentification */
+	/* Basic Authentication */
 	if (auth_usr)
 	{
 		char auth_string[256] = { 0 };
