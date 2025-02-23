@@ -49,7 +49,7 @@ When the status-code differs from the ones selected with '\-o', the given string
 Retrieve proxy settings from environment variables ('http_proxy' and 'https_proxy').
 .TP
 .B "\-F"
-Attempt TCP Fast Open while trying to connect to a server (for Linux, version 3.7 onwards of the kernel)   
+Attempt TCP Fast Open while trying to connect to a server (for Linux, version 3.7 onwards of the kernel)
 .TP
 .B "\-f"
 Flood ping: do not sit idle between each ping but ping as fast as the computer and network allow you to.
@@ -109,7 +109,7 @@ Only resolve the hostname once: this takes the resolving out of the loop so that
 Split measured latency in time to connect and time to exchange a request with the HTTP server. Split are returned in the following order: Resolve, Connect, Send, Receive, Disconnect.
 .TP
 .B "\-s"
-When a successfull transaction was done, show the HTTP statuscode (200, 404, etc.).
+When a successful transaction was done, show the HTTP statuscode (200, 404, etc.).
 .TP
 .B "\-T x"
 Read the password for website authentication from file 'x' (instead of entering it on the command line).
@@ -154,7 +154,7 @@ Ignore the hostname in the URL and connect to 'x' instead. The given URL will be
 Not only draw the magnitude of the fourier transform, draw the phase as well.
 .TP
 .B "\-\-graph\-limit x"
-If values measured are bigger than x, then they're limitted to x.
+If values measured are bigger than x, then they're limited to x.
 .TP
 .B "\-\-header x"
 Add an additional request-header 'x'.
@@ -217,7 +217,7 @@ Show the version and exit.
 In split mode (\-S) something like "time=0.08+24.09+23.17+15.64+0.02=62.98 ms" is shown. The first value is the time it took to resolve the hostname (or 'n/a' if it did not resolve in this iteration, e.g. in "resolve once" (\-r) mode), then the time it took to connect (or \-1 for example in persistent connection (\-Q, HTTP v1.1), after that the time it took to put the request on the wire, then the time it took for the HTTP server to process the request and send it back and lastly the time it took to close the connection.
 
 .SH GRAPH
-The graph in the ncurses uses colors to encode a meaning. Green: value is less than 1 block. Red: the value did not fit in the graph. Blue: the value was limitted by \-\-graph\-limit. Cyan: no measurement for that point in time.
+The graph in the ncurses uses colors to encode a meaning. Green: value is less than 1 block. Red: the value did not fit in the graph. Blue: the value was limited by \-\-graph\-limit. Cyan: no measurement for that point in time.
 
 .SH KEYS
 Press <CTRL> + <c> to exit the program. It will display a summary of what was measured.
