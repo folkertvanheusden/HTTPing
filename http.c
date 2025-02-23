@@ -17,6 +17,9 @@
 
 int get_HTTP_headers(int socket_h, SSL *ssl_h, char **headers, int *overflow, double timeout)
 {
+#if !HAVE_OPENSSL
+	(void)ssl_h;
+#endif
 	char *term = NULL;
 	int len_in=0, len=4096;
 	char *buffer = (char *)malloc(len + 1);
