@@ -1404,7 +1404,11 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'F':
+#ifdef NO_TFO
+                fprintf(stderr, gettext("Warning: TCP TFO is not supported. Disabling.\n"));
+#else
 				use_tfo = 1;
+#endif
 				break;
 
 			case 22:
@@ -2170,7 +2174,7 @@ persistent_loop:
 #if defined(linux) || defined(__FreeBSD__)
 			if (getsockopt(fd, IPPROTO_TCP, TCP_INFO, &info, &info_len) == 0)
 			{
-#ifdef TCPI_OPT_SYN_DATA
+#if defined(TCPI_OPT_SYN_DATA) && !defined(NO_TFO)
 				if (info.tcpi_options & TCPI_OPT_SYN_DATA)
 					tfo_success = 1;
 #endif
@@ -2358,8 +2362,10 @@ persistent_loop:
 #endif
 				}
 
+#ifndef NO_TFO
 				if (tfo_success)
 					str_add(&line, " F");
+#endif
 
 #if HAVE_NCURSES
 				if (ncurses_mode)
