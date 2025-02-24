@@ -47,6 +47,9 @@ int set_no_delay(int fd)
 
 int create_socket(struct sockaddr *bind_to, struct addrinfo *ai, int recv_buffer_size, int tx_buffer_size, int max_mtu, char use_no_delay, int priority, int tos)
 {
+#ifndef linux
+	(void)priority;
+#endif
 	int fd = -1;
 
 	/* create socket */

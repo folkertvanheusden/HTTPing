@@ -72,6 +72,7 @@ volatile char got_sigquit = 0;
 
 void handler_quit(int s)
 {
+	(void)s;
 	signal(SIGQUIT, handler_quit);
 
 	got_sigquit = 1;
