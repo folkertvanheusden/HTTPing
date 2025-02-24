@@ -2465,7 +2465,9 @@ persistent_loop:
 	if (!quiet && !machine_readable && !nagios_mode && !json_output)
 		stats_line(1, complete_url, count, curncount, err, ok, started_at, verbose, &t_total, avg_httping_time, show_Bps ? &bps : NULL);
 
+#if HAVE_OPENSSL
 error_exit:
+#endif
 	if (nagios_mode)
 		return nagios_result(ok, nagios_mode, nagios_exit_code, avg_httping_time, nagios_warn, nagios_crit);
 
