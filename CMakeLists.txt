@@ -18,6 +18,7 @@ option(USE_GETTEXT "Enable interantionalization" OFF)
 add_compile_options(-Wall -pedantic -Wextra)
 add_compile_options(-Werror=unused-label)
 add_compile_options(-Werror=unused-parameter)
+add_compile_options(-Werror=strict-prototypes)
 
 set(SOURCES
   colors.c
