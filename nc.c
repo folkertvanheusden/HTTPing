@@ -463,7 +463,7 @@ void draw_rad_column(WINDOW *win, int x, double val)
 	}
 }
 
-double get_cur_scc()
+double get_cur_scc(void)
 {
         double scc_val = 0.0;
         double prev_val = 0.0, u0 = 0.0;
@@ -593,7 +593,7 @@ void draw_fft(void)
 }
 #endif
 
-double calc_trend()
+double calc_trend(void)
 {
 	int half = history_n / 2, index = 0;
 	double v1 = 0.0, v2 = 0.0;
@@ -626,7 +626,7 @@ double calc_trend()
 	return (v1 - v2) / (v2 / 100.0);
 }
 
-void draw_graph()
+void draw_graph(void)
 {
 	int index = 0, loop_n = min(max_x, history_n), n = 0, n2 = 0;
 	double avg = 0, sd = 0;

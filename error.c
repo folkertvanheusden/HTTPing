@@ -45,12 +45,12 @@ void set_error(const char *fmt, ...)
 	va_end(ap);
 }
 
-void clear_error()
+void clear_error(void)
 {
 	last_error[0] = 0x00;
 }
 
-char * get_error()
+char * get_error(void)
 {
 	return last_error;
 }
