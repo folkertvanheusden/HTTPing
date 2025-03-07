@@ -761,6 +761,9 @@ void show_stats_t(int y, int x, char *header, stats_t *data, char abbreviate)
 
 void update_stats(stats_t *resolve, stats_t *connect, stats_t *request, stats_t *total, stats_t *ssl_setup, int n_ok, int n_fail, const char *last_connect_str, const char *fp, char use_tfo, char dg, stats_t *st_to, stats_t *tcp_rtt_stats, int re_tx, int pmtu, int tos, stats_t *close_st, stats_t *t_write, int n_cookies, char abbreviate, stats_t *stats_header_size)
 {
+	(void)tcp_rtt_stats;
+	(void)re_tx;
+	(void)pmtu;
 	char force_redraw = 0;
 	struct pollfd p = { 0, POLLIN, 0 };
 
