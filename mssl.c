@@ -11,7 +11,6 @@
 #include <sys/socket.h>
 #include <openssl/bio.h>
 #include <openssl/conf.h>
-#include <openssl/engine.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/md5.h>
