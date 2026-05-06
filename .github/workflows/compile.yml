@@ -34,9 +34,6 @@ jobs:
                 cmake \
                 pkg-config \
                 gcc \
-                gcc-aarch64-linux-gnu \
-                gcc-arm-linux-gnueabihf \
-                gcc-mips-linux-gnu \
                 libncurses-dev \
                 fftw-dev \
                 libfftw3-dev \
