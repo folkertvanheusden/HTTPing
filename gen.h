@@ -34,6 +34,13 @@
 #define gettext(x) (x)
 #endif
 
+#ifdef __APPLE__
+#include <AvailabilityMacros.h>
+#if MAC_OS_X_VERSION_MIN_REQUIRED < 101100
+#define NO_TFO
+#endif
+#endif
+
 typedef struct
 {
 	double cur, min, avg, max, sd, med;
