@@ -1,10 +1,10 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
 
+#define _GNU_SOURCE
 #include "config.h"
 #if INTL_FOUND
 #include <libintl.h>
 #endif
-#define _GNU_SOURCE
 #ifndef __USE_XOPEN
 #define __USE_XOPEN
 #endif

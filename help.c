@@ -20,7 +20,8 @@ void new_version_alert(void)
 	{
 		char buffer[4096], *dummy = 0x00;
 
-		fgets(buffer, sizeof buffer, fh);
+		if (!fgets(buffer, sizeof buffer, fh))
+			buffer[0] = 0x00;
 
 		fclose(fh);
 
