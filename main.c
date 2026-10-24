@@ -1839,6 +1839,10 @@ persistent_loop:
 						update_statst(&t_ssl, ssl_handshake);
 					else
 					{
+						SSL_free(ssl_h);
+						ssl_h = NULL;
+						s_bio = NULL;
+
 						stats_close(&fd, &t_close, 1);
 						fd = rc;
 
