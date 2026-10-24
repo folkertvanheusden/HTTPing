@@ -1552,7 +1552,7 @@ int main(int argc, char *argv[])
 #if HAVE_OPENSSL
 	if (use_ssl)
 	{
-		client_ctx = initialize_ctx(ask_compression, ca_path);
+		client_ctx = initialize_ctx(ask_compression, ca_path, ignore_ssl_errors);
 		if (!client_ctx)
 		{
 			set_error(gettext("problem creating SSL context"));
