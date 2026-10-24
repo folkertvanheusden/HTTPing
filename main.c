@@ -938,6 +938,7 @@ int main(int argc, char *argv[])
 	BIO *s_bio = NULL;
 #endif
 	struct sockaddr_in *bind_to = NULL;
+	const char *bind_device = NULL;
 	struct sockaddr_in bind_to_4;
 	struct sockaddr_in6 bind_to_6;
 	char split = 0, use_ipv6 = 0;
@@ -1060,6 +1061,7 @@ int main(int argc, char *argv[])
 		{"header", 1, NULL, 25 },
 		{"ca-path", 1, NULL, 26 },
 		{"median", 0, NULL, 27 },
+		{"interface", 1, NULL, 28 },
 #if HAVE_NCURSES
 		{"ncurses",	0, NULL, 'K' },
 		{"gui",	0, NULL, 'K' },
@@ -1103,6 +1105,14 @@ int main(int argc, char *argv[])
 
 			case 27:
 				use_median = 1;
+				break;
+
+			case 28:
+#ifdef linux
+				bind_device = optarg;
+#else
+				error_exit("Binding to an interface is only supported on Linux.\n");
+#endif
 				break;
 
 			case 25:
@@ -1790,7 +1800,7 @@ persistent_loop:
 				int rc = -1;
 				struct addrinfo *ai_dummy = proxy_host ? ai_use_proxy : ai_use;
 
-				fd = create_socket((struct sockaddr *)bind_to, ai_dummy, recv_buffer_size, tx_buffer_size, max_mtu, use_tcp_nodelay, priority, send_tos);
+				fd = create_socket((struct sockaddr *)bind_to, bind_device, ai_dummy, recv_buffer_size, tx_buffer_size, max_mtu, use_tcp_nodelay, priority, send_tos);
 				if (fd < 0)
 					rc = fd; /* FIXME need to fix this, this is ugly */
 				else if (proxy_host)
@@ -1812,7 +1822,8 @@ persistent_loop:
 
 				if (rc < 0)
 				{
-					failure_close(fd);
+					if (fd >= 0)
+						failure_close(fd);
 					fd = rc; /* FIXME need to fix this */
 				}
 

@@ -46,10 +46,11 @@ int set_no_delay(int fd)
 	return 0;
 }
 
-int create_socket(struct sockaddr *bind_to, struct addrinfo *ai, int recv_buffer_size, int tx_buffer_size, int max_mtu, char use_no_delay, int priority, int tos)
+int create_socket(struct sockaddr *bind_to, const char *bind_device, struct addrinfo *ai, int recv_buffer_size, int tx_buffer_size, int max_mtu, char use_no_delay, int priority, int tos)
 {
 #ifndef linux
 	(void)priority;
+	(void)bind_device;
 #endif
 	int fd = -1;
 
@@ -61,10 +62,24 @@ int create_socket(struct sockaddr *bind_to, struct addrinfo *ai, int recv_buffer
 		return RC_INVAL;
 	}
 
+#ifdef linux
 	/* go through a specific interface? */
+	if (bind_device)
+	{
+		if (setsockopt(fd, SOL_SOCKET, SO_BINDTODEVICE, bind_device, strlen(bind_device) + 1) == -1)
+		{
+			set_error(gettext("error binding to interface %s (%s)"), bind_device, strerror(errno));
+			close(fd);
+			return RC_INVAL;
+		}
+	}
+#endif
+
+	/* use a specific source address? */
 	if (bind_to)
 	{
 		int set = 1;
+		socklen_t bind_to_len = bind_to -> sa_family == AF_INET6 ? sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in);
 
 		/* set reuse flags */
 		if (setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &set, sizeof set) == -1)
@@ -74,9 +89,9 @@ int create_socket(struct sockaddr *bind_to, struct addrinfo *ai, int recv_buffer
 			return RC_INVAL;
 		}
 
-		if (bind(fd, bind_to, sizeof *bind_to) == -1)
+		if (bind(fd, bind_to, bind_to_len) == -1)
 		{
-			set_error(gettext("error binding to interface (%s)"), strerror(errno));
+			set_error(gettext("error binding to address (%s)"), strerror(errno));
 			close(fd);
 			return RC_INVAL;
 		}
