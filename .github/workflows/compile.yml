@@ -35,87 +35,69 @@ jobs:
                 pkg-config \
                 gcc \
                 libncurses-dev \
-                fftw-dev \
                 libfftw3-dev \
                 gettext \
                 libssl-dev
 
-    - name: Configure & Build with gcc (minimal configuration)
-      env:
-        cc: gcc
+    - name: Configure & Build
       run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
+        podman exec -i stable gcc --version
+        podman exec -i stable clang --version
 
-    - name: Configure & Build with gcc (SSL support)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with gcc (full TUI support)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with gcc (full TUI support and SSL)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with gcc (full TUI support, SSL, and gettext)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with clang (minimal configuration)
-      env:
-        cc: clang
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
+        for cc in gcc clang
+        do
+          for config in \
+            "-DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON"
+          do
+            echo "::group::Configure & Build with ${cc} (${config})"
+            podman exec -i stable rm -rf build-${cc}
+            podman exec -i --env CC=${cc} stable cmake -B build-${cc} ${config}
+            podman exec -i stable cmake --build build-${cc} --parallel "$(nproc)"
+            podman exec -i stable ./build-${cc}/httping --version
+            echo "::endgroup::"
+          done
+        done
 
   freebsd:
     runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        release:
+        - "14"
+        - "15"
+
     steps:
     - uses: actions/checkout@v4
-    - name: Test in FreeBSD
-      id: test
+
+    - name: Build on FreeBSD ${{ matrix.release }}
       uses: vmactions/freebsd-vm@v1
       with:
+        release: ${{ matrix.release }}
         usesh: true
+        # no openssl package: build against the OpenSSL in the base system
         prepare: |
-          pkg install -y cmake pkgconf openssl ncurses gettext-tools fftw3
+          pkg install -y cmake pkgconf ncurses gettext-tools fftw3
 
         run: |
-          echo "Configure & Build with gcc (minimal configuration)"
-          rm -fr build
-          cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-          cmake --build build
+          freebsd-version
+          cc --version
 
-          echo "Configure & Build with gcc (SSL support)"
-          rm -fr build
-          cmake -B build -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
-          cmake --build build --clean-first
-
-          echo "Configure & Build with gcc (full TUI support)"
-          rm -fr build
-          cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-          cmake --build build --clean-first
-
-          echo "Configure & Build with gcc (full TUI support and SSL)"
-          rm -fr build
-          cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF
-          cmake --build build --clean-first
-
-          echo "Configure & Build with gcc (full TUI support, SSL, and gettext)"
-          rm -fr build
-          cmake -B build -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON
-          cmake --build build --clean-first
+          for config in \
+            "-DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON"
+          do
+            echo "::group::Configure & Build with clang ($config)"
+            rm -rf build
+            cmake -B build $config
+            cmake --build build --parallel "$(sysctl -n hw.ncpu)"
+            ./build/httping --version
+            echo "::endgroup::"
+          done
