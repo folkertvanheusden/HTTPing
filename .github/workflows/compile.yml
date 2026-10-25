@@ -35,52 +35,32 @@ jobs:
                 pkg-config \
                 gcc \
                 libncurses-dev \
-                fftw-dev \
                 libfftw3-dev \
                 gettext \
                 libssl-dev
 
-    - name: Configure & Build with gcc (minimal configuration)
-      env:
-        cc: gcc
+    - name: Configure & Build
       run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
+        podman exec -i stable gcc --version
+        podman exec -i stable clang --version
 
-    - name: Configure & Build with gcc (SSL support)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with gcc (full TUI support)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with gcc (full TUI support and SSL)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with gcc (full TUI support, SSL, and gettext)
-      env:
-        cc: gcc
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON
-        podman exec -i stable cmake --build build-${cc}
-
-    - name: Configure & Build with clang (minimal configuration)
-      env:
-        cc: clang
-      run: |
-        podman exec -i --env CC=${cc} stable cmake -B build-${cc} -DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF
-        podman exec -i stable cmake --build build-${cc}
+        for cc in gcc clang
+        do
+          for config in \
+            "-DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=OFF -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=OFF -DUSE_FFTW3=OFF -DUSE_SSL=ON -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=OFF -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=OFF" \
+            "-DUSE_TUI=ON -DUSE_FFTW3=ON -DUSE_SSL=ON -DUSE_GETTEXT=ON"
+          do
+            echo "::group::Configure & Build with ${cc} (${config})"
+            podman exec -i stable rm -rf build-${cc}
+            podman exec -i --env CC=${cc} stable cmake -B build-${cc} ${config}
+            podman exec -i stable cmake --build build-${cc} --parallel "$(nproc)"
+            podman exec -i stable ./build-${cc}/httping --version
+            echo "::endgroup::"
+          done
+        done
 
   freebsd:
     runs-on: ubuntu-24.04
