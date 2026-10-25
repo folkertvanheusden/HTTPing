@@ -80,7 +80,7 @@ if(USE_TUI)
 endif()
 
 if(USE_SSL)
-  find_package(OpenSSL REQUIRED)
+  find_package(OpenSSL 3.0 REQUIRED)
   target_link_libraries(httping OpenSSL::SSL OpenSSL::Crypto)
 endif()
 

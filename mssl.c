@@ -10,7 +10,6 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <openssl/bio.h>
-#include <openssl/conf.h>
 #include <openssl/err.h>
 #include <openssl/evp.h>
 #include <openssl/md5.h>
@@ -31,12 +30,6 @@ BIO *bio_err = NULL;
 void shutdown_ssl(void)
 {
 	BIO_free(bio_err);
-
-	ERR_free_strings();
-
-	CONF_modules_free();
-	EVP_cleanup();
-	CRYPTO_cleanup_all_ex_data();
 }
 
 int close_ssl_connection(SSL *const ssl_h)
@@ -258,7 +251,7 @@ int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO 
 	}
 	while (!SSL_is_init_finished(*ssl_h) && !got_sigquit);
 
-	X509 *cert = SSL_get_peer_certificate(*ssl_h);
+	X509 *cert = SSL_get1_peer_certificate(*ssl_h);
 	if (cert)
 		X509_free(cert);
 	else
@@ -286,16 +279,14 @@ SSL_CTX * initialize_ctx(const char ask_compression, const char *ca_path)
 
 	if (!bio_err)
 	{
-		SSL_library_init();
-		SSL_load_error_strings();
-		ERR_load_crypto_strings();
+		OPENSSL_init_ssl(0, NULL);
 
 		/* error write context */
 		bio_err = BIO_new_fp(stderr, BIO_NOCLOSE);
 	}
 
 	/* create context */
-	meth = SSLv23_method();
+	meth = TLS_method();
 	ctx = SSL_CTX_new(meth);
 
 	if (ca_path == NULL) {
@@ -317,7 +308,7 @@ char * get_fingerprint(SSL *const ssl_h)
 	char *string = NULL;
 
 	unsigned char fp_digest[EVP_MAX_MD_SIZE];
-	X509 *x509_data = SSL_get_peer_certificate(ssl_h);
+	X509 *x509_data = SSL_get1_peer_certificate(ssl_h);
 
 	if (x509_data)
 	{
