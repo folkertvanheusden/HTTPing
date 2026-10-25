@@ -616,7 +616,7 @@ void fetch_proxy_settings(char **proxy_user, char **proxy_password, char **proxy
 
 void parse_nagios_settings(const char *in, double *nagios_warn, double *nagios_crit)
 {
-	char *dummy = strchr(in, ',');
+	const char *dummy = strchr(in, ',');
 	if (!dummy)
 		error_exit(gettext("-n: missing parameter\n"));
 
@@ -627,7 +627,7 @@ void parse_nagios_settings(const char *in, double *nagios_warn, double *nagios_c
 
 void parse_bind_to(const char *in, struct sockaddr_in *bind_to_4, struct sockaddr_in6 *bind_to_6, struct sockaddr_in **bind_to)
 {
-	char *dummy = strchr(in, ':');
+	const char *dummy = strchr(in, ':');
 
 	if (dummy)
 	{
@@ -651,7 +651,7 @@ void parse_bind_to(const char *in, struct sockaddr_in *bind_to_4, struct sockadd
 
 time_t parse_date_from_response_headers(const char *in)
 {
-	char *date = NULL, *komma = NULL;
+	const char *date = NULL, *komma = NULL;
 	if (in == NULL)
 		return -1;
 
@@ -676,8 +676,8 @@ int calc_page_age(const char *in, const time_t their_ts)
 
 	if (in != NULL && their_ts > 0)
 	{
-		char *date = strstr(in, "\nLast-Modified:");
-		char *komma = date ? strchr(date, ',') : NULL;
+		const char *date = strstr(in, "\nLast-Modified:");
+		const char *komma = date ? strchr(date, ',') : NULL;
 		if (date && komma)
 		{
 			struct tm tm;
@@ -728,17 +728,18 @@ char check_compressed(const char *reply)
 {
 	if (reply != NULL)
 	{
-		char *encoding = strstr(reply, "\nContent-Encoding:");
+		const char *encoding = strstr(reply, "\nContent-Encoding:");
 
 		if (encoding)
 		{
-			char *dummy = strchr(encoding + 1, '\r');
-			if (dummy) *dummy = 0x00;
+			/* only look at the Content-Encoding line, without
+			 * modifying the reply
+			 */
+			const char *end = encoding + 1 + strcspn(encoding + 1, "\r\n");
+			const char *gzip = strstr(encoding, "gzip");
+			const char *deflate = strstr(encoding, "deflate");
 
-			dummy = strchr(encoding + 1, '\n');
-			if (dummy) *dummy = 0x00;
-
-			if (strstr(encoding, "gzip") == 0 || strstr(encoding, "deflate") == 0)
+			if ((gzip && gzip < end) || (deflate && deflate < end))
 				return 1;
 		}
 	}
