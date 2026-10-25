@@ -209,7 +209,10 @@ void usage(const char *me)
 	format_help(NULL, "--tx-buffer", gettext("transmit buffer size"));
 	format_help("-r", "--resolve-once", gettext("resolve hostname only once (useful when pinging roundrobin DNS: also takes the first DNS lookup out of the loop so that the first measurement is also correct)"));
 	format_help("-W", NULL, gettext("do not abort the program if resolving failed: keep retrying"));
-	format_help("-y x", "--bind-to", gettext("bind to an ip-address (and thus interface) with an optional port"));
+	format_help("-y x", "--bind-to", gettext("bind to a local ip-address (this does not select the interface packets are sent from)"));
+#ifdef linux
+	format_help(NULL, "--interface", gettext("send packets only through this network interface (e.g. eth0)"));
+#endif
 #if HAVE_TFO
 	format_help("-F", "--tcp-fast-open", gettext("\"TCP fast open\" (TFO), reduces the latency of TCP connects"));
 #endif
