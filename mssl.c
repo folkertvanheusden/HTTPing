@@ -244,7 +244,13 @@ int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO 
 			}
 			else
 			{
-				set_error(gettext("SSL handshake error: %s"), ERR_reason_error_string(ERR_get_error()));
+				long v = SSL_get_verify_result(*ssl_h);
+
+				if (v != X509_V_OK)
+					set_error(gettext("SSL certificate validation failed: %s"), X509_verify_cert_error_string(v));
+				else
+					set_error(gettext("SSL handshake error: %s"), ERR_reason_error_string(ERR_get_error()));
+
 				return -1;
 			}
 		}
@@ -254,12 +260,18 @@ int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO 
 	X509 *cert = SSL_get1_peer_certificate(*ssl_h);
 	if (cert)
 		X509_free(cert);
-	else
+	else if (ignore_ssl_errors == 0)
+	{
 		set_error(gettext("SSL no peer certificate"));
+		return -1;
+	}
 
 	long v = SSL_get_verify_result(*ssl_h);
 	if (v != X509_V_OK && ignore_ssl_errors == 0)
+	{
 		set_error(gettext("SSL certificate validation failed: %s"), X509_verify_cert_error_string(v));
+		return -1;
+	}
 
 	if (got_sigquit)
 		return -1;
@@ -272,7 +284,7 @@ int connect_ssl(const int fd, SSL_CTX *const client_ctx, SSL **const ssl_h, BIO 
 	return 0;
 }
 
-SSL_CTX * initialize_ctx(const char ask_compression, const char *ca_path)
+SSL_CTX * initialize_ctx(const char ask_compression, const char *ca_path, const char ignore_ssl_errors)
 {
 	const SSL_METHOD *meth = NULL;
 	SSL_CTX *ctx = NULL;
@@ -294,6 +306,8 @@ SSL_CTX * initialize_ctx(const char ask_compression, const char *ca_path)
 	} else {
 		SSL_CTX_load_verify_locations(ctx, NULL, ca_path);
 	}
+
+	SSL_CTX_set_verify(ctx, ignore_ssl_errors ? SSL_VERIFY_NONE : SSL_VERIFY_PEER, NULL);
 
 #ifdef SSL_OP_NO_COMPRESSION
 	if (!ask_compression)

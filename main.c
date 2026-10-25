@@ -1552,7 +1552,7 @@ int main(int argc, char *argv[])
 #if HAVE_OPENSSL
 	if (use_ssl)
 	{
-		client_ctx = initialize_ctx(ask_compression, ca_path);
+		client_ctx = initialize_ctx(ask_compression, ca_path, ignore_ssl_errors);
 		if (!client_ctx)
 		{
 			set_error(gettext("problem creating SSL context"));
@@ -1839,6 +1839,10 @@ persistent_loop:
 						update_statst(&t_ssl, ssl_handshake);
 					else
 					{
+						SSL_free(ssl_h);
+						ssl_h = NULL;
+						s_bio = NULL;
+
 						stats_close(&fd, &t_close, 1);
 						fd = rc;
 
