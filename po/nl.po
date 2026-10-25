@@ -825,14 +825,14 @@ msgstr "gepingde systeem"
 #: main.c:2105
 #: main.c:2100
 #, c-format
-msgid "%s%s%s%s%s:%s%d%s (%d/%d bytes), seq=%s%d%s "
-msgstr "%s%s%s%s%s:%s%d%s (%d/%d bytes), volgnr=%s%d%s "
+msgid "%s%s%s%s%s:%s%d%s (%d/%d bytes), seq=%s%lld%s "
+msgstr "%s%s%s%s%s:%s%d%s (%d/%d bytes), volgnr=%s%lld%s "
 
 #: main.c:2107
 #: main.c:2102
 #, c-format
-msgid "%s%s%s%s%s:%s%d%s (%d bytes), seq=%s%d%s "
-msgstr "%s%s%s%s%s:%s%d%s (%d bytes), volgnr=%s%d%s "
+msgid "%s%s%s%s%s:%s%d%s (%d bytes), seq=%s%lld%s "
+msgstr "%s%s%s%s%s:%s%d%s (%d bytes), volgnr=%s%lld%s "
 
 #: main.c:2113
 #: main.c:2114
@@ -891,8 +891,8 @@ msgstr "interne fout! (curncount)\n"
 #: main.c:2290
 #: main.c:2285
 #, c-format
-msgid "%s%d%s connects, %s%d%s ok, %s%3.2f%%%s failed, time %s%s%.0fms%s\n"
-msgstr "%s%d%s verbindingen, %s%d%s ok, %s%3.2f%%%s mislukt, tijd %s%s%.0fms%s\n"
+msgid "%s%lld%s connects, %s%lld%s ok, %s%3.2f%%%s failed, time %s%s%.0fms%s\n"
+msgstr "%s%lld%s verbindingen, %s%lld%s ok, %s%3.2f%%%s mislukt, tijd %s%s%.0fms%s\n"
 
 #: main.c:2294
 #: main.c:2289
@@ -1021,8 +1021,8 @@ msgstr "totaal "
 
 #: nc.c:760
 #, c-format
-msgid "ok: %3d, fail: %3d%s, scc: %s, kalman: %s"
-msgstr "ok: %2d, mislukt: %2d%s, scc: %s, Kalman: %s"
+msgid "ok: %3lld, fail: %3lld%s, scc: %s, kalman: %s"
+msgstr "ok: %2lld, mislukt: %2lld%s, scc: %s, Kalman: %s"
 
 #: nc.c:760
 msgid ", with TFO"

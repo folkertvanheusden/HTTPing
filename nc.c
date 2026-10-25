@@ -761,7 +761,7 @@ void show_stats_t(int y, int x, char *header, stats_t *data, char abbreviate)
 		wattroff(w_stats, A_DIM);
 }
 
-void update_stats(stats_t *resolve, stats_t *connect, stats_t *request, stats_t *total, stats_t *ssl_setup, int n_ok, int n_fail, const char *last_connect_str, const char *fp, char use_tfo, char dg, stats_t *st_to, stats_t *tcp_rtt_stats, int re_tx, int pmtu, int tos, stats_t *close_st, stats_t *t_write, int n_cookies, char abbreviate, stats_t *stats_header_size)
+void update_stats(stats_t *resolve, stats_t *connect, stats_t *request, stats_t *total, stats_t *ssl_setup, long long n_ok, long long n_fail, const char *last_connect_str, const char *fp, char use_tfo, char dg, stats_t *st_to, stats_t *tcp_rtt_stats, int re_tx, int pmtu, int tos, stats_t *close_st, stats_t *t_write, int n_cookies, char abbreviate, stats_t *stats_header_size)
 {
 	(void)tcp_rtt_stats;
 	(void)re_tx;
@@ -787,7 +787,7 @@ void update_stats(stats_t *resolve, stats_t *connect, stats_t *request, stats_t 
 
 		scc_str    = format_value(get_cur_scc(), 5, 3, abbreviate);
 		kalman_str = format_value(kalman_do(total -> cur), 5, 3, abbreviate);
-		myprintloc(w_stats, 8, 0, gettext("ok: %3d, fail: %3d%s, scc: %s, kalman: %s"), n_ok, n_fail, use_tfo ? gettext(", with TFO") : "", scc_str, kalman_str);
+		myprintloc(w_stats, 8, 0, gettext("ok: %3lld, fail: %3lld%s, scc: %s, kalman: %s"), n_ok, n_fail, use_tfo ? gettext(", with TFO") : "", scc_str, kalman_str);
 		free(kalman_str);
 		free(scc_str);
 

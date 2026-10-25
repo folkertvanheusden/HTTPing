@@ -37,7 +37,7 @@
 typedef struct
 {
 	double cur, min, avg, max, sd, med;
-	int n;
+	long long n;
 	char valid, cur_valid;
 	char calc_median;
 	int median_size;

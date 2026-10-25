@@ -167,13 +167,13 @@ void emit_headers(char *in)
 #endif
 }
 
-void emit_json(char ok, int seq, double start_ts, stats_t *t_resolve, stats_t *t_connect, stats_t *t_request, int http_code, const char *msg, int header_size, int data_size, double Bps, const char *host, const char *ssl_fp, double toff_diff_ts, char tfo_success, stats_t *t_ssl, stats_t *t_write, stats_t *t_close, int n_cookies, stats_t *stats_to, stats_t *tcp_rtt_stats, int re_tx, int pmtu, int recv_tos, stats_t *t_total)
+void emit_json(char ok, long long seq, double start_ts, stats_t *t_resolve, stats_t *t_connect, stats_t *t_request, int http_code, const char *msg, int header_size, int data_size, double Bps, const char *host, const char *ssl_fp, double toff_diff_ts, char tfo_success, stats_t *t_ssl, stats_t *t_write, stats_t *t_close, int n_cookies, stats_t *stats_to, stats_t *tcp_rtt_stats, int re_tx, int pmtu, int recv_tos, stats_t *t_total)
 {
 	if (seq > 1)
 		printf(", \n");
 	printf("{ ");
 	printf("\"status\" : \"%d\", ", ok);
-	printf("\"seq\" : \"%d\", ", seq);
+	printf("\"seq\" : \"%lld\", ", seq);
 	printf("\"start_ts\" : \"%f\", ", start_ts);
 	if (t_resolve!=NULL && t_resolve -> cur_valid)
 		printf("\"resolve_ms\" : \"%e\", ", t_resolve -> cur);
@@ -237,7 +237,7 @@ char *get_ts_str(int verbose)
 	return strdup(buffer);
 }
 
-void emit_error(int verbose, int seq, double start_ts)
+void emit_error(int verbose, long long seq, double start_ts)
 {
 	char *ts = show_ts ? get_ts_str(verbose) : NULL;
 
@@ -746,7 +746,7 @@ char check_compressed(const char *reply)
 	return 0;
 }
 
-int nagios_result(int ok, int nagios_mode, int nagios_exit_code, double avg_httping_time, double nagios_warn, double nagios_crit)
+int nagios_result(long long ok, int nagios_mode, int nagios_exit_code, double avg_httping_time, double nagios_warn, double nagios_crit)
 {
 	if (nagios_mode == 1)
 	{
@@ -858,10 +858,10 @@ typedef struct
 	long long int Bps_avg;
 } bps_t;
 
-void stats_line(const char with_header, const char *const complete_url, const int count, const int curncount, const int err, const int ok, double started_at, const char verbose, const stats_t *const t_total, const double avg_httping_time, bps_t *const bps)
+void stats_line(const char with_header, const char *const complete_url, const long long count, const long long curncount, const long long err, const long long ok, double started_at, const char verbose, const stats_t *const t_total, const double avg_httping_time, bps_t *const bps)
 {
 	double total_took = get_ts() - started_at;
-	int dummy = count;
+	long long dummy = count;
 
 	if (with_header)
 		printf(gettext("--- %s ping statistics ---\n"), complete_url);
@@ -872,7 +872,7 @@ void stats_line(const char with_header, const char *const complete_url, const in
 	if (count == -1)
 		dummy = curncount;
 
-	printf(gettext("%s%d%s connects, %s%d%s ok, %s%3.2f%%%s failed, time %s%s%.0fms%s\n"), c_yellow, curncount, c_normal, c_green, ok, c_normal, c_red, (((double)err) / ((double)dummy)) * 100.0, c_normal, c_blue, c_bright, total_took * 1000.0, c_normal);
+	printf(gettext("%s%lld%s connects, %s%lld%s ok, %s%3.2f%%%s failed, time %s%s%.0fms%s\n"), c_yellow, curncount, c_normal, c_green, ok, c_normal, c_red, (((double)err) / ((double)dummy)) * 100.0, c_normal, c_blue, c_bright, total_took * 1000.0, c_normal);
 
 	if (ok > 0)
 	{
@@ -905,13 +905,13 @@ int main(int argc, char *argv[])
 	char *get = NULL, *request = NULL;
 	int req_len = 0;
 	int c = 0;
-	int count = -1, curncount = 0;
+	long long count = -1, curncount = 0;
 	double wait = 1.0;
 #if HAVE_NCURSES
 	char wait_set = 0;
 #endif
 	int audible = 0;
-	int ok = 0, err = 0;
+	long long ok = 0, err = 0;
 	double timeout = 30.0;
 	char show_statuscodes = 0;
 	char use_ssl = 0;
@@ -1329,7 +1329,7 @@ int main(int argc, char *argv[])
 				break;
 
 			case 'c':
-				count = atoi(optarg);
+				count = atoll(optarg);
 				break;
 
 #if HAVE_NCURSES
@@ -2316,9 +2316,9 @@ persistent_loop:
 					str_add(&line, "%s%s ", c_white, operation);
 
 				if (persistent_connections && show_bytes_xfer)
-					str_add(&line, gettext("%s%s%s%s%s:%s%d%s (%d/%d bytes), seq=%s%d%s "), c_red, i6_bs, current_host, i6_be, c_white, c_yellow, portnr, c_white, headers_len, len, c_blue, curncount-1, c_white);
+					str_add(&line, gettext("%s%s%s%s%s:%s%d%s (%d/%d bytes), seq=%s%lld%s "), c_red, i6_bs, current_host, i6_be, c_white, c_yellow, portnr, c_white, headers_len, len, c_blue, curncount-1, c_white);
 				else
-					str_add(&line, gettext("%s%s%s%s%s:%s%d%s (%d bytes), seq=%s%d%s "), c_red, i6_bs, current_host, i6_be, c_white, c_yellow, portnr, c_white, headers_len, c_blue, curncount-1, c_white);
+					str_add(&line, gettext("%s%s%s%s%s:%s%d%s (%d bytes), seq=%s%lld%s "), c_red, i6_bs, current_host, i6_be, c_white, c_yellow, portnr, c_white, headers_len, c_blue, curncount-1, c_white);
 
 				tot_str = format_value(t_total.cur, 6, 2, abbreviate);
 
