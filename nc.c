@@ -404,9 +404,11 @@ void status_line(char *fmt, ...)
 
         va_start(ap, fmt);
 
-	vasprintf(&line, fmt, ap);
-        myprint(w_line2, line);
-	free(line);
+	if (vasprintf(&line, fmt, ap) != -1)
+	{
+		myprint(w_line2, line);
+		free(line);
+	}
 
         va_end(ap);
 

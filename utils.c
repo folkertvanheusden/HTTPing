@@ -111,7 +111,8 @@ char * format_value(double value, int digits_sig, int digits_nsig, char abbrevia
 	if (mul[0])
 		digits_sig--;
 
-	(void)asprintf(&out, "%*.*f%s", digits_sig, digits_nsig, value / div, mul);
+	if (asprintf(&out, "%*.*f%s", digits_sig, digits_nsig, value / div, mul) == -1)
+		error_exit(gettext("asprintf failed"));
 
 	return out;
 }
