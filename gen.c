@@ -73,7 +73,7 @@ static int cmpfunc(const void *a, const void *b)
 
 double calc_median(const stats_t *in)
 {
-	int half = in -> n / 2;
+	long long half = in -> n / 2;
 
 	if (in -> calc_median == 0)
 		return -1;
