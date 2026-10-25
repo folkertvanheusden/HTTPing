@@ -1,5 +1,6 @@
 /* Released under AGPL v3 with exception for the OpenSSL library. See license.txt */
 
+#include "config.h"
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/socket.h>
@@ -162,15 +163,16 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 	to.tv_usec = (long)(timeout * 1000.0) % 1000000;
 
 	/* connect to peer */
+#if HAVE_TFO
 	if (tfo && *tfo)
 	{
-#if defined(__FreeBSD__) || defined(__APPLE__)
+#if HAVE_MSG_FASTOPEN
+		rc = sendto(fd, msg, msg_len, MSG_FASTOPEN, ai -> ai_addr, ai -> ai_addrlen);
+#else
 		int enable = 1;
 		setsockopt(fd, IPPROTO_TCP, TCP_FASTOPEN, &enable, sizeof(enable));
 
 		rc = sendto(fd, msg, msg_len, 0, ai->ai_addr, ai->ai_addrlen);
-#else
-		rc = sendto(fd, msg, msg_len, MSG_FASTOPEN, ai -> ai_addr, ai -> ai_addrlen);
 #endif
 
 		if (rc == msg_len)
@@ -185,10 +187,18 @@ int connect_to(int fd, struct addrinfo *ai, double timeout, char *tfo, char *msg
 		}
 	}
 	else
+#else
+	(void)tfo;
+	(void)msg;
+	(void)msg_len;
+	(void)msg_accepted;
+#endif
 	{
 		int rc = -1;
 
+#if HAVE_TFO
 old_connect:
+#endif
 		rc = connect(fd, ai -> ai_addr, ai -> ai_addrlen);
 
 		if (rc == 0)

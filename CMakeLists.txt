@@ -63,6 +63,12 @@ endif()
 set(CMAKE_BUILD_TYPE Debug)
 
 include(FindPkgConfig)
+include(CheckSymbolExists)
+
+# TCP fast open: Linux sends data in the SYN with MSG_FASTOPEN, FreeBSD and
+# macOS (10.11+) with the TCP_FASTOPEN socket option
+check_symbol_exists(MSG_FASTOPEN "sys/socket.h" HAVE_MSG_FASTOPEN)
+check_symbol_exists(TCP_FASTOPEN "sys/types.h;netinet/in.h;netinet/tcp.h" HAVE_TCP_FASTOPEN)
 
 if(USE_TUI)
   pkg_check_modules(NCURSES REQUIRED ncurses)
